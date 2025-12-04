@@ -1,0 +1,275 @@
+'use client';
+
+import { useRef, useEffect } from 'react';
+import { ChatMessage, ParsedReceipt, ProjectSuggestion } from '@/types';
+
+interface KraneMessageListProps {
+  messages: ChatMessage[];
+  onConfirmReceipt?: (messageId: string) => void;
+  onEditReceipt?: (messageId: string) => void;
+  onSelectProject?: (messageId: string, projectId: string, costCodeId: string) => void;
+}
+
+function ConfidenceBadge({ confidence }: { confidence: number }) {
+  const getColor = () => {
+    if (confidence >= 0.9) return 'bg-emerald-100 text-emerald-700';
+    if (confidence >= 0.8) return 'bg-amber-100 text-amber-700';
+    return 'bg-red-100 text-red-700';
+  };
+
+  return (
+    <span className={`text-xs px-1.5 py-0.5 rounded ${getColor()}`}>
+      {(confidence * 100).toFixed(0)}%
+    </span>
+  );
+}
+
+function ParsedReceiptCard({ 
+  receipt, 
+  suggestions,
+  onConfirm,
+  onEdit 
+}: { 
+  receipt: ParsedReceipt;
+  suggestions?: ProjectSuggestion;
+  onConfirm?: () => void;
+  onEdit?: () => void;
+}) {
+  const avgConfidence = (
+    receipt.merchantConfidence +
+    receipt.dateConfidence +
+    receipt.totalConfidence
+  ) / 3;
+
+  return (
+    <div className="mt-2 bg-white rounded-lg p-3 space-y-2 border border-slate-200 shadow-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-slate-500 uppercase tracking-wider">OCR Results</span>
+        <ConfidenceBadge confidence={avgConfidence} />
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-slate-500 text-sm">Merchant</span>
+          <div className="flex items-center gap-2">
+            <span className="text-slate-800 font-medium">{receipt.merchant}</span>
+            <ConfidenceBadge confidence={receipt.merchantConfidence} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-500 text-sm">Date</span>
+          <div className="flex items-center gap-2">
+            <span className="text-slate-700">{receipt.date}</span>
+            <ConfidenceBadge confidence={receipt.dateConfidence} />
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-500 text-sm">Total</span>
+          <div className="flex items-center gap-2">
+            <span className="text-slate-800 font-bold">${receipt.total.toFixed(2)}</span>
+            <ConfidenceBadge confidence={receipt.totalConfidence} />
+          </div>
+        </div>
+        {receipt.tax && (
+          <div className="flex items-center justify-between">
+            <span className="text-slate-500 text-sm">Tax</span>
+            <span className="text-slate-600">${receipt.tax.toFixed(2)}</span>
+          </div>
+        )}
+      </div>
+
+      {receipt.items && receipt.items.length > 0 && (
+        <div className="border-t border-slate-200 pt-2 mt-2">
+          <span className="text-xs text-slate-500 uppercase tracking-wider">Items</span>
+          <div className="mt-1 space-y-1">
+            {receipt.items.slice(0, 3).map((item) => (
+              <div key={item.id} className="flex items-center justify-between text-sm">
+                <span className="text-slate-600 truncate flex-1">{item.description}</span>
+                <span className="text-slate-500 ml-2">${item.total.toFixed(2)}</span>
+              </div>
+            ))}
+            {receipt.items.length > 3 && (
+              <span className="text-xs text-slate-400">+{receipt.items.length - 3} more items</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {suggestions && (
+        <div className="border-t border-slate-200 pt-2 mt-2">
+          <span className="text-xs text-slate-500 uppercase tracking-wider">Suggested</span>
+          <div className="mt-1 space-y-1">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">Project</span>
+              <span className="text-amber-600 font-medium">{suggestions.projectName}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-500">Cost Code</span>
+              <span className="text-amber-600">{suggestions.costCodeName}</span>
+            </div>
+            <p className="text-xs text-slate-400 mt-1">{suggestions.reason}</p>
+          </div>
+        </div>
+      )}
+
+      {avgConfidence < 0.8 && (
+        <div className="p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
+          ⚠️ Low confidence - please review before confirming
+        </div>
+      )}
+
+      <div className="flex gap-2 pt-2">
+        <button
+          onClick={onEdit}
+          className="flex-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm rounded-lg transition-colors"
+        >
+          Edit
+        </button>
+        <button
+          onClick={onConfirm}
+          className="flex-1 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium text-sm rounded-lg transition-colors"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MessageBubble({ 
+  message, 
+  onConfirm,
+  onEdit 
+}: { 
+  message: ChatMessage;
+  onConfirm?: () => void;
+  onEdit?: () => void;
+}) {
+  const isUser = message.sender === 'user';
+
+  return (
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
+      <div
+        className={`max-w-[85%] ${
+          isUser
+            ? 'bg-amber-500 text-white rounded-2xl rounded-br-md shadow-md'
+            : 'bg-white text-slate-800 rounded-2xl rounded-bl-md border border-slate-200 shadow-sm'
+        } ${message.type === 'image' ? 'p-1' : 'px-4 py-2.5'}`}
+      >
+        {/* Image messages */}
+        {message.type === 'image' && message.imageUrl && (
+          <div className="space-y-2">
+            <div className="relative w-48 h-48 rounded-xl overflow-hidden bg-slate-200">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="absolute bottom-2 left-2 right-2 text-xs text-center text-white bg-black/50 rounded px-2 py-1">
+                {message.imageUrl}
+              </div>
+            </div>
+            {message.status === 'sending' && (
+              <div className="flex items-center gap-2 text-xs text-white/70 px-2">
+                <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Processing...
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Text messages */}
+        {message.type === 'text' && (
+          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+        )}
+
+        {/* Receipt messages with parsed data */}
+        {message.type === 'receipt' && message.parsedData && 'merchant' in message.parsedData && (
+          <div>
+            <p className="text-sm mb-1">{message.content}</p>
+            <ParsedReceiptCard 
+              receipt={message.parsedData as ParsedReceipt}
+              suggestions={message.suggestions}
+              onConfirm={onConfirm}
+              onEdit={onEdit}
+            />
+          </div>
+        )}
+
+        {/* System messages */}
+        {message.type === 'system' && (
+          <div className="flex items-center gap-2 text-sm">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>{message.content}</span>
+          </div>
+        )}
+
+        {/* Action messages */}
+        {message.type === 'action' && (
+          <div className="flex items-center gap-2 text-sm text-amber-600">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>{message.content}</span>
+          </div>
+        )}
+
+        {/* Timestamp */}
+        <div className={`text-xs mt-1 ${isUser ? 'text-white/60' : 'text-slate-400'}`}>
+          {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {isUser && message.status === 'sent' && (
+            <span className="ml-1">✓✓</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function KraneMessageList({ 
+  messages, 
+  onConfirmReceipt,
+  onEditReceipt 
+}: KraneMessageListProps) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-4 bg-gradient-to-b from-slate-100 to-slate-50">
+      {/* Welcome message */}
+      {messages.length === 0 && (
+        <div className="text-center py-8">
+          <div className="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-slate-700 mb-2">Welcome to Krane</h3>
+          <p className="text-sm text-slate-500 max-w-xs mx-auto">
+            Upload receipts or BOLs to get started. I'll help you process and log them.
+          </p>
+        </div>
+      )}
+
+      {/* Messages */}
+      {messages.map((message) => (
+        <MessageBubble
+          key={message.id}
+          message={message}
+          onConfirm={() => onConfirmReceipt?.(message.id)}
+          onEdit={() => onEditReceipt?.(message.id)}
+        />
+      ))}
+
+      <div ref={bottomRef} />
+    </div>
+  );
+}

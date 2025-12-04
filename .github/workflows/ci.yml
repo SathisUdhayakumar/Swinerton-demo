@@ -1,0 +1,133 @@
+# GitHub Actions CI Workflow for Swinerton Demo
+# 
+# This workflow runs on:
+# - Push to main branch
+# - Pull requests targeting main
+#
+# It validates the build and optionally runs tests.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Type check (optional but recommended)
+      - name: TypeScript check
+        run: npx tsc --noEmit
+        continue-on-error: true
+
+      # Lint (if eslint is configured)
+      - name: Lint
+        run: npm run lint --if-present
+        continue-on-error: true
+
+      # Build the application
+      - name: Build
+        run: npm run build
+
+      # Run tests (if test script exists)
+      - name: Test
+        run: npm test --if-present
+        continue-on-error: true
+
+  # =============================================================================
+  # VERCEL DEPLOYMENT (COMMENTED OUT)
+  # =============================================================================
+  # 
+  # Option 1: Use Vercel GitHub Integration (Recommended)
+  # - Go to https://vercel.com/new and import your repo
+  # - Vercel will automatically deploy on push
+  # - No GitHub Actions config needed
+  #
+  # Option 2: Deploy via GitHub Actions using vercel-action
+  # Uncomment the job below and add these secrets to your repo:
+  # - VERCEL_TOKEN: Your Vercel API token
+  # - VERCEL_ORG_ID: Your Vercel org/team ID  
+  # - VERCEL_PROJECT_ID: Your Vercel project ID
+  #
+  # To get these values:
+  # 1. Run `vercel` in your project root (this creates .vercel/project.json)
+  # 2. Get token from: https://vercel.com/account/tokens
+  # 3. Copy orgId and projectId from .vercel/project.json
+  #
+  # deploy:
+  #   name: Deploy to Vercel
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v25
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         vercel-args: '--prod'
+  #         working-directory: ./
+  #
+  # Option 3: Deploy using Vercel CLI directly
+  #
+  # deploy-cli:
+  #   name: Deploy via Vercel CLI
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20'
+  #
+  #     - name: Install Vercel CLI
+  #       run: npm i -g vercel
+  #
+  #     - name: Pull Vercel Environment
+  #       run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+  #
+  #     - name: Build with Vercel
+  #       run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+  #
+  #     - name: Deploy to Vercel
+  #       run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
