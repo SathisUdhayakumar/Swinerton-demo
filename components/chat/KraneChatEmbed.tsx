@@ -471,6 +471,7 @@ export function KraneChatEmbed({ onReceiptCreated, embedded = false }: KraneChat
         projectName,
         costCodeId,
         costCodeName,
+        confidence: 1.0,
         reason: 'User selected',
       };
 
