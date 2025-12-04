@@ -173,6 +173,7 @@ export async function POST(request: NextRequest) {
 
     const result: OCRResult = {
       success: true,
+      type: 'bol',
       parsedBOL,
       processingTime,
       warnings: parsedBOL.confidence < 0.8
