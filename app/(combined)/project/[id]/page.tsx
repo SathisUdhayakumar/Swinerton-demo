@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { formatCurrency } from '@/lib/utils';
 import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
 import { Delivery } from '@/types';
@@ -128,6 +134,111 @@ const budgetData: Record<string, BudgetLineItem[]> = {
   ],
 };
 
+// PO Details interface
+interface POLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalPrice: number;
+  delivered: number;
+  remaining: number;
+}
+
+interface PODetail {
+  id: string;
+  poNumber: string;
+  vendor: string;
+  vendorAddress: string;
+  vendorContact: string;
+  vendorPhone: string;
+  vendorEmail: string;
+  projectId: string;
+  projectName: string;
+  amount: number;
+  status: 'Active' | 'Completed' | 'Pending' | 'On Hold';
+  dateIssued: string;
+  dateRequired: string;
+  paymentTerms: string;
+  description: string;
+  lineItems: POLineItem[];
+  deliveries: {
+    id: string;
+    date: string;
+    bolNumber: string;
+    itemsDelivered: number;
+    status: string;
+  }[];
+  invoices: {
+    id: string;
+    date: string;
+    amount: number;
+    status: string;
+  }[];
+}
+
+// Mock PO details data (simplified - you can expand this)
+const poDetails: Record<string, PODetail> = {
+  'PO-2024-001': {
+    id: 'PO-2024-001',
+    poNumber: 'PO-2024-001',
+    vendor: 'ABC Concrete Supply',
+    vendorAddress: '1234 Industrial Blvd, Dallas, TX 75201',
+    vendorContact: 'John Smith',
+    vendorPhone: '(214) 555-0123',
+    vendorEmail: 'jsmith@abcconcrete.com',
+    projectId: 'alpha',
+    projectName: 'Clemson-210 Keowee Trl',
+    amount: 125000,
+    status: 'Active',
+    dateIssued: '2024-11-15',
+    dateRequired: '2024-12-15',
+    paymentTerms: 'Net 30',
+    description: 'Concrete materials for foundation and slab work',
+    lineItems: [
+      { id: 'L1', description: 'Ready-Mix Concrete 4000 PSI', quantity: 500, unit: 'CY', unitPrice: 145, totalPrice: 72500, delivered: 350, remaining: 150 },
+      { id: 'L2', description: 'Concrete Admixture', quantity: 200, unit: 'GAL', unitPrice: 85, totalPrice: 17000, delivered: 150, remaining: 50 },
+      { id: 'L3', description: 'Rebar #5', quantity: 1000, unit: 'LF', unitPrice: 12.50, totalPrice: 12500, delivered: 800, remaining: 200 },
+    ],
+    deliveries: [
+      { id: 'DEL-001', date: '2024-11-20', bolNumber: 'BOL-78452', itemsDelivered: 4, status: 'Verified' },
+      { id: 'DEL-002', date: '2024-11-25', bolNumber: 'BOL-78501', itemsDelivered: 3, status: 'Verified' },
+    ],
+    invoices: [
+      { id: 'INV-2024-1001', date: '2024-11-22', amount: 45000, status: 'Paid' },
+      { id: 'INV-2024-1045', date: '2024-11-28', amount: 32000, status: 'Approved' },
+    ],
+  },
+  'PO-2024-002': {
+    id: 'PO-2024-002',
+    poNumber: 'PO-2024-002',
+    vendor: 'Steel Solutions Inc',
+    vendorAddress: '5678 Steel Way, Houston, TX 77001',
+    vendorContact: 'Maria Garcia',
+    vendorPhone: '(713) 555-0456',
+    vendorEmail: 'mgarcia@steelsolutions.com',
+    projectId: 'alpha',
+    projectName: 'Clemson-210 Keowee Trl',
+    amount: 340000,
+    status: 'Active',
+    dateIssued: '2024-11-20',
+    dateRequired: '2024-12-30',
+    paymentTerms: 'Net 45',
+    description: 'Structural steel for suspended deck framing',
+    lineItems: [
+      { id: 'L1', description: 'W12x26 Steel Beam', quantity: 120, unit: 'LF', unitPrice: 850, totalPrice: 102000, delivered: 80, remaining: 40 },
+      { id: 'L2', description: 'W10x22 Steel Beam', quantity: 200, unit: 'LF', unitPrice: 680, totalPrice: 136000, delivered: 150, remaining: 50 },
+    ],
+    deliveries: [
+      { id: 'DEL-004', date: '2024-11-28', bolNumber: 'BOL-S1234', itemsDelivered: 5, status: 'Verified' },
+    ],
+    invoices: [
+      { id: 'INV-2024-2001', date: '2024-11-30', amount: 125000, status: 'Approved' },
+    ],
+  },
+};
+
 // Mock PO data - expanded list
 const purchaseOrders: PurchaseOrder[] = [
   { id: 'PO-2024-001', poNumber: 'PO-2024-001', vendor: 'ABC Concrete Supply', project: 'Clemson-210 Keowee Trl', projectId: 'alpha', deliveryWindow: { start: '2024-11-15', end: '2024-12-15' }, lines: [], status: 'open', createdAt: '2024-11-15T10:00:00Z' },
@@ -157,6 +268,8 @@ export default function ProjectDetailPage({ params }: PageProps) {
   const [activeTab, setActiveTab] = useState<TabId>(tabFromUrl || 'materials');
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [isDeliveriesLoading, setIsDeliveriesLoading] = useState(true);
+  const [selectedPO, setSelectedPO] = useState<PODetail | null>(null);
+  const [isPOModalOpen, setIsPOModalOpen] = useState(false);
 
   // Update tab when URL search params change
   useEffect(() => {
@@ -388,9 +501,18 @@ export default function ProjectDetailPage({ params }: PageProps) {
                       {projectPOs.map((po) => (
                         <tr key={po.id} className="border-b border-slate-100 hover:bg-slate-50">
                           <td className="py-3 px-4">
-                            <Link href={`/po/${po.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                            <button
+                              onClick={() => {
+                                const poDetail = poDetails[po.id];
+                                if (poDetail) {
+                                  setSelectedPO(poDetail);
+                                  setIsPOModalOpen(true);
+                                }
+                              }}
+                              className="text-sm font-medium text-blue-600 hover:underline cursor-pointer"
+                            >
                               {po.id}
-                            </Link>
+                            </button>
                           </td>
                           <td className="py-3 px-4 text-sm text-slate-600">{po.vendor}</td>
                           <td className="py-3 px-4 text-sm text-slate-600">
@@ -534,6 +656,180 @@ export default function ProjectDetailPage({ params }: PageProps) {
           <ReceiptsDeliveriesSection projectId={id} initialViewMode="all" />
         </div>
       )}
+
+      {/* PO Details Modal */}
+      <Dialog open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          {selectedPO && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-slate-900">
+                  {selectedPO.poNumber}
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-6 mt-4">
+                {/* Vendor Information */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Vendor Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">{selectedPO.vendor}</p>
+                      <p className="text-sm text-slate-600">{selectedPO.vendorAddress}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div>
+                        <p className="text-xs text-slate-500">Contact</p>
+                        <p className="text-sm text-slate-700">{selectedPO.vendorContact}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Phone</p>
+                        <p className="text-sm text-slate-700">{selectedPO.vendorPhone}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Email</p>
+                        <p className="text-sm text-slate-700">{selectedPO.vendorEmail}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* PO Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Purchase Order Details</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-500">Status</p>
+                        <p className={`text-sm font-semibold ${
+                          selectedPO.status === 'Active' ? 'text-emerald-600' :
+                          selectedPO.status === 'Completed' ? 'text-slate-600' :
+                          'text-amber-600'
+                        }`}>
+                          {selectedPO.status}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Date Issued</p>
+                        <p className="text-sm text-slate-700">{selectedPO.dateIssued}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Date Required</p>
+                        <p className="text-sm text-slate-700">{selectedPO.dateRequired}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-500">Payment Terms</p>
+                        <p className="text-sm text-slate-700">{selectedPO.paymentTerms}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-xs text-slate-500">Total Amount</p>
+                        <p className="text-lg font-bold text-slate-900">{formatCurrency(selectedPO.amount)}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-xs text-slate-500">Description</p>
+                        <p className="text-sm text-slate-700">{selectedPO.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Line Items */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Line Items</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-slate-200">
+                            <th className="text-left py-2 px-3 text-sm font-medium text-slate-500">Description</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Quantity</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Unit Price</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Total</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Delivered</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Remaining</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedPO.lineItems.map((item) => (
+                            <tr key={item.id} className="border-b border-slate-100">
+                              <td className="py-2 px-3 text-sm text-slate-700">{item.description}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600">{item.quantity} {item.unit}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600">{formatCurrency(item.unitPrice)}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-900 font-medium">{formatCurrency(item.totalPrice)}</td>
+                              <td className="py-2 px-3 text-sm text-right text-emerald-600">{item.delivered}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600">{item.remaining}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Deliveries */}
+                {selectedPO.deliveries.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Deliveries</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {selectedPO.deliveries.map((delivery) => (
+                          <div key={delivery.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div>
+                              <p className="text-sm font-medium text-slate-700">{delivery.bolNumber}</p>
+                              <p className="text-xs text-slate-500">{delivery.date} • {delivery.itemsDelivered} items</p>
+                            </div>
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              delivery.status === 'Verified' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {delivery.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Invoices */}
+                {selectedPO.invoices.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Invoices</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {selectedPO.invoices.map((invoice) => (
+                          <div key={invoice.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div>
+                              <p className="text-sm font-medium text-slate-700">{invoice.id}</p>
+                              <p className="text-xs text-slate-500">{invoice.date} • {formatCurrency(invoice.amount)}</p>
+                            </div>
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              invoice.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' :
+                              invoice.status === 'Approved' ? 'bg-blue-100 text-blue-700' :
+                              'bg-amber-100 text-amber-700'
+                            }`}>
+                              {invoice.status}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
