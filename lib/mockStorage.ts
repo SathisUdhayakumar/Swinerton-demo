@@ -30,7 +30,7 @@ export const mockProjects: Project[] = [
   },
   {
     id: 'beta',
-    name: 'Project Beta',
+    name: 'DFW Terminal F',
     code: 'BETA-2025',
     budget: 750000,
     spent: 180000,
@@ -100,7 +100,7 @@ export const mockPOs: PurchaseOrder[] = [
     id: 'po-002',
     poNumber: '771',
     vendor: 'FrameWorks',
-    project: 'Project Beta',
+    project: 'DFW Terminal F',
     projectId: 'beta',
     deliveryWindow: {
       start: '2025-12-05',

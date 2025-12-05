@@ -45,7 +45,7 @@ const projects: Project[] = [
   },
   {
     id: 'beta',
-    name: 'Project Beta',
+    name: 'DFW Terminal F',
     costCodes: [
       { id: 'cc-005', code: '6100', name: 'Materials - General' },
       { id: 'cc-006', code: '6200', name: 'Materials - Steel' },

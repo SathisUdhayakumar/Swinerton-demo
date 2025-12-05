@@ -77,7 +77,7 @@ export default function CaptureReceiptPage() {
         },
         {
           id: 'beta',
-          name: 'Project Beta',
+          name: 'DFW Terminal F',
           code: 'BETA-2025',
           budget: 750000,
           spent: 180000,

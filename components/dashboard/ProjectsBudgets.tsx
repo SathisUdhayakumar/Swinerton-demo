@@ -38,7 +38,7 @@ const projects: Project[] = [
   },
   {
     id: "beta",
-    name: "Project Beta",
+    name: "DFW Terminal F",
     costCodes: [
       { code: "0500", name: "Labor", spent: 1000, budget: 5000 },
       { code: "0510", name: "Subcontracts", spent: 3000, budget: 15000 },
