@@ -12,14 +12,20 @@ type StatusFilter = 'all' | 'logged' | 'verified' | 'pending' | 'review';
 
 interface ReceiptsDeliveriesSectionProps {
   projectId?: string;
+  initialViewMode?: ViewMode;
 }
 
-export function ReceiptsDeliveriesSection({ projectId }: ReceiptsDeliveriesSectionProps) {
+export function ReceiptsDeliveriesSection({ projectId, initialViewMode = 'all' }: ReceiptsDeliveriesSectionProps) {
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<ViewMode>('all');
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
+  // Update viewMode when initialViewMode prop changes
+  useEffect(() => {
+    setViewMode(initialViewMode);
+  }, [initialViewMode]);
   const [isReceiptsConnected, setIsReceiptsConnected] = useState(false);
   const [isDeliveriesConnected, setIsDeliveriesConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
