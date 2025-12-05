@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NotificationBadge } from '@/components/notifications/NotificationBadge';
+import { KraneLogo } from '@/components/layout/KraneLogo';
 
 const projects: Record<string, { name: string; company: string }> = {
   'alpha': {
@@ -30,12 +31,7 @@ export function HeaderWithBreadcrumbs() {
       <header className="h-16 bg-[#1e3a5f] border-b border-[#2a4a6f] flex items-center justify-between px-6 flex-shrink-0">
         {/* Logo and Breadcrumbs */}
         <div className="flex items-center gap-4">
-          <Link href="/projects" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#fbbf24] rounded-lg flex items-center justify-center">
-              <span className="text-[#1e3a5f] font-bold text-lg">K</span>
-            </div>
-            <span className="text-white text-xl font-bold">KRANE</span>
-          </Link>
+          <KraneLogo href="/projects" size="md" />
           <div className="h-6 w-px bg-white/30" />
           <div className="text-sm text-white font-medium">
             {isDashboard ? 'Dashboard' : project.name}
@@ -86,20 +82,7 @@ export function HeaderWithBreadcrumbs() {
   return (
     <header className="h-16 bg-[#1e3a5f] border-b border-[#2a4a6f] flex items-center justify-between px-6 flex-shrink-0">
       {/* Logo */}
-      <Link href="/projects" className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-          {/* Yellow Pyramid Icon */}
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Left face (darker yellow) */}
-            <path d="M12 5L7 19L12 17L12 5Z" fill="#f59e0b"/>
-            {/* Right face (brighter yellow) */}
-            <path d="M12 5L17 19L12 17L12 5Z" fill="#fbbf24"/>
-            {/* Base edge */}
-            <path d="M7 19L17 19L12 17L7 19Z" fill="#fbbf24" opacity="0.6"/>
-          </svg>
-        </div>
-        <span className="text-white text-xl font-bold tracking-tight">KRANE</span>
-      </Link>
+      <KraneLogo href="/projects" size="md" />
 
       {/* Right Side Icons */}
       <div className="flex items-center gap-4">

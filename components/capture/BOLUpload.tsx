@@ -48,12 +48,12 @@ export function BOLUpload({ onUpload, isLoading }: BOLUploadProps) {
   };
 
   const demoFiles = [
-    { name: 'bol_steel.jpg', label: 'Full Delivery (PO#552)' },
+    { name: 'bol_steel.jpg', label: 'Full Delivery' },
     { name: 'bol_partial.jpg', label: 'Partial Delivery' },
   ];
 
   return (
-    <Card className="border-2 border-dashed border-blue-300 bg-white shadow-sm">
+    <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30 shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
           <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,7 +70,7 @@ export function BOLUpload({ onUpload, isLoading }: BOLUploadProps) {
           onDragOver={handleDrag}
           onDrop={handleDrop}
           className={`
-            relative flex flex-col items-center justify-center p-8 rounded-lg
+            relative flex flex-col items-center justify-center p-12 rounded-lg
             border-2 border-dashed transition-all duration-200 cursor-pointer
             ${dragActive
               ? 'border-blue-400 bg-blue-50'
@@ -101,13 +101,13 @@ export function BOLUpload({ onUpload, isLoading }: BOLUploadProps) {
             </div>
           ) : (
             <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 bg-slate-200 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
               </div>
-              <p className="text-slate-700 font-medium">Drop BOL image here</p>
-              <p className="text-slate-500 text-sm mt-1">or click to browse</p>
+              <p className="text-slate-800 font-semibold text-base mb-1">Drop BOL image here</p>
+              <p className="text-slate-500 text-sm">or click to browse</p>
             </div>
           )}
         </div>
@@ -147,7 +147,7 @@ export function BOLUpload({ onUpload, isLoading }: BOLUploadProps) {
 
         {/* Submit Button */}
         <Button
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md"
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold shadow-md"
           disabled={!selectedFile || isLoading}
           onClick={handleSubmit}
         >

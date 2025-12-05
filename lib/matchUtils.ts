@@ -59,9 +59,26 @@ function isWithinDeliveryWindow(
 export function matchBOLToPO(parsedBOL: ParsedBOL): MatchResult | null {
   // Try exact PO number match first
   if (parsedBOL.poReference) {
-    const exactMatch = mockPOs.find(
+    // Try exact match first
+    let exactMatch = mockPOs.find(
       (po) => po.poNumber === parsedBOL.poReference
     );
+    
+    // If no exact match, try matching without 'PO-' prefix
+    if (!exactMatch && parsedBOL.poReference.startsWith('PO-')) {
+      const poNumberWithoutPrefix = parsedBOL.poReference.replace('PO-', '');
+      exactMatch = mockPOs.find(
+        (po) => po.poNumber === `PO-${poNumberWithoutPrefix}` || po.poNumber === poNumberWithoutPrefix
+      );
+    }
+    
+    // Also try matching with 'PO-' prefix if poReference doesn't have it
+    if (!exactMatch && !parsedBOL.poReference.startsWith('PO-')) {
+      exactMatch = mockPOs.find(
+        (po) => po.poNumber === `PO-${parsedBOL.poReference}` || po.poNumber === parsedBOL.poReference
+      );
+    }
+    
     if (exactMatch) {
       return {
         po: exactMatch,

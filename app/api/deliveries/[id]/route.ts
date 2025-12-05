@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDeliveryById, deleteDelivery } from '@/lib/mockStorage';
+import { getDeliveryById, deleteDelivery, getCurrentUser, addAuditLog } from '@/lib/mockStorage';
 import { eventBus, DELIVERY_EVENTS } from '@/lib/eventBus';
 
 interface RouteParams {
@@ -42,6 +42,22 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 
+  const user = getCurrentUser();
+
+  // Add audit log before deletion
+  addAuditLog({
+    entityType: 'delivery',
+    entityId: id,
+    action: 'deleted',
+    performedBy: user.name,
+    details: { 
+      bolNumber: delivery.bolNumber,
+      poNumber: delivery.poNumber,
+      vendor: delivery.vendor,
+      projectId: delivery.projectId,
+    },
+  });
+
   const deleted = deleteDelivery(id);
 
   if (!deleted) {
@@ -60,7 +76,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
   return NextResponse.json({
     success: true,
-    message: 'Delivery deleted successfully',
+    message: 'Delivery deleted successfully. All linked information has been removed.',
   });
 }
 

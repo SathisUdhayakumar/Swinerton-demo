@@ -6,7 +6,7 @@ import { generateBOLNumber } from '@/lib/mockStorage';
 const mockOCRResults: Record<string, Partial<ParsedBOL>> = {
   'bol_steel.jpg': {
     vendor: 'SteelCo',
-    poReference: '552',
+    poReference: 'PO-2024-003',
     lines: [
       {
         id: 'ocr-001',
@@ -29,7 +29,7 @@ const mockOCRResults: Record<string, Partial<ParsedBOL>> = {
   },
   'bol_partial.jpg': {
     vendor: 'SteelCo',
-    poReference: '552',
+    poReference: 'PO-2024-003',
     lines: [
       {
         id: 'ocr-003',
@@ -52,7 +52,7 @@ const mockOCRResults: Record<string, Partial<ParsedBOL>> = {
   },
   'bol_lowconf.jpg': {
     vendor: 'SteelCo',
-    poReference: '552',
+    poReference: 'PO-2024-003',
     lines: [
       {
         id: 'ocr-005',
@@ -109,7 +109,7 @@ const mockOCRResults: Record<string, Partial<ParsedBOL>> = {
 // Default OCR result for unknown images
 const defaultOCRResult: Partial<ParsedBOL> = {
   vendor: 'SteelCo',
-  poReference: '552',
+  poReference: 'PO-2024-003',
   lines: [
     {
       id: 'ocr-default-001',

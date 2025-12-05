@@ -69,7 +69,7 @@ export const mockUsers: User[] = [
 export const mockPOs: PurchaseOrder[] = [
   {
     id: 'po-001',
-    poNumber: '552',
+    poNumber: 'PO-2024-003',
     vendor: 'SteelCo',
     project: 'Clemson-210 Keowee Trl',
     projectId: 'alpha',
@@ -143,8 +143,8 @@ export let mockDeliveries: Delivery[] = [
     vendor: 'SteelCo',
     project: 'Clemson-210 Keowee Trl',
     projectId: 'alpha',
-    poNumber: 'PO-2024-002',
-    poId: 'PO-2024-002',
+    poNumber: 'PO-2024-003',
+    poId: 'PO-2024-003',
     deliveryDate: '2025-12-01',
     status: 'verified',
     matchScore: 0.98,
@@ -176,7 +176,7 @@ export let mockDeliveries: Delivery[] = [
       bolNumber: 'BOL-2025-1201-001',
       vendor: 'SteelCo',
       deliveryDate: '2025-12-01',
-      poReference: '552',
+      poReference: 'PO-2024-003',
       lines: [
         {
           id: 'bl-001',

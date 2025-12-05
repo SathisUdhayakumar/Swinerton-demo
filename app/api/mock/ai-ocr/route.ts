@@ -77,8 +77,8 @@ const mockReceiptResults: Record<string, ParsedReceipt> = {
 // BOL OCR mock results
 const mockBOLResults: Record<string, Partial<ParsedBOL>> = {
   'bol_steel.jpg': {
-    vendor: 'SteelCo',
-    poReference: '552',
+    vendor: 'Material Works Co',
+    poReference: 'PO-2024-003',
     lines: [
       { id: 'ocr-001', description: 'Steel Beams W12x26', qty: 100, unit: 'EA', confidence: 0.95, rawText: 'STEEL BEAMS W12X26 - QTY: 100 EA' },
       { id: 'ocr-002', description: 'Steel Bolts 3/4" x 3"', qty: 500, unit: 'EA', confidence: 0.92, rawText: 'STEEL BOLTS 3/4" X 3" - QTY: 500 EA' },
@@ -86,8 +86,8 @@ const mockBOLResults: Record<string, Partial<ParsedBOL>> = {
     confidence: 0.93,
   },
   'bol_partial.jpg': {
-    vendor: 'SteelCo',
-    poReference: '552',
+    vendor: 'Material Works Co',
+    poReference: 'PO-2024-003',
     lines: [
       { id: 'ocr-003', description: 'Steel Beams W12x26', qty: 80, unit: 'EA', confidence: 0.91, rawText: 'STEEL BEAMS W12X26 - QTY: 80 EA' },
       { id: 'ocr-004', description: 'Steel Bolts 3/4" x 3"', qty: 400, unit: 'EA', confidence: 0.89, rawText: 'STEEL BOLTS 3/4 X 3 - QTY: 400 EA' },
@@ -110,9 +110,10 @@ const defaultReceiptResult: ParsedReceipt = {
 };
 
 const defaultBOLResult: Partial<ParsedBOL> = {
-  vendor: 'Unknown Vendor',
+  vendor: 'Material Works Co',
+  poReference: 'PO-2024-003',
   lines: [
-    { id: 'ocr-default', description: 'Unknown Item', qty: 1, unit: 'EA', confidence: 0.75, rawText: 'UNKNOWN ITEM' },
+    { id: 'ocr-default', description: 'Steel Beams W12x26', qty: 100, unit: 'EA', confidence: 0.75, rawText: 'STEEL BEAMS W12X26' },
   ],
   confidence: 0.75,
 };

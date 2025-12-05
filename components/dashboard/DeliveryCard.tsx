@@ -8,6 +8,7 @@ import { Delivery, DeliveryStatus } from '@/types';
 interface DeliveryCardProps {
   delivery: Delivery;
   onClick?: () => void;
+  onDelete?: (delivery: Delivery) => void;
 }
 
 function isNewDelivery(deliveryId: string): boolean {
@@ -44,7 +45,7 @@ function StatusBadge({ status }: { status: DeliveryStatus }) {
   );
 }
 
-export function DeliveryCard({ delivery, onClick }: DeliveryCardProps) {
+export function DeliveryCard({ delivery, onClick, onDelete }: DeliveryCardProps) {
   const [isNew, setIsNew] = useState(false);
   const exactMatches = delivery.lines.filter((l) => l.matchStatus === 'exact').length;
   const issues = delivery.lines.filter(
@@ -74,12 +75,31 @@ export function DeliveryCard({ delivery, onClick }: DeliveryCardProps) {
     }
   };
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete(delivery);
+    }
+  };
+
   const cardContent = (
     <Card className="bg-white border-slate-200 hover:border-blue-300 transition-all hover:shadow-lg cursor-pointer group relative">
       {isNew && (
         <span className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
           NEW
         </span>
+      )}
+      {onDelete && (
+        <button
+          onClick={handleDeleteClick}
+          className="absolute top-2 right-2 z-20 w-6 h-6 rounded-full bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+          title="Delete delivery"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       )}
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
@@ -102,7 +122,7 @@ export function DeliveryCard({ delivery, onClick }: DeliveryCardProps) {
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 mb-3">
           <div className="text-left">
             <p className="text-sm text-slate-600">
-              {delivery.poNumber ? `PO #${delivery.poNumber}` : 'No PO'}
+              {delivery.poNumber ? (delivery.poNumber.startsWith('PO-') ? delivery.poNumber : `PO #${delivery.poNumber}`) : 'No PO'}
             </p>
             <p className="text-xs text-slate-400">{delivery.project}</p>
           </div>

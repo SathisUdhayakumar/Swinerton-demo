@@ -2,10 +2,12 @@
 
 import { use, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { DeliveryCard } from '@/components/dashboard/DeliveryCard';
 import { Delivery, SSEDeliveryEvent } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { BOLvsPOCompare } from '@/components/compare/BOLvsPOCompare';
 
 interface PageProps {
@@ -25,6 +27,7 @@ const projects: Record<string, { id: string; name: string }> = {
 
 export default function ProjectDeliveriesPage({ params }: PageProps) {
   const { id } = use(params);
+  const router = useRouter();
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
@@ -132,9 +135,21 @@ export default function ProjectDeliveriesPage({ params }: PageProps) {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">Deliveries</h1>
-          <p className="text-slate-500 mt-1">{project.name} - Real-time deliveries from site team</p>
+        <div className="flex items-start gap-4">
+          <Button
+            variant="outline"
+            className="border-slate-300 text-slate-700 hover:bg-slate-50"
+            onClick={() => router.push(`/project/${id}?tab=po`)}
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Deliveries</h1>
+            <p className="text-slate-500 mt-1">{project.name} - Real-time deliveries from site team</p>
+          </div>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
