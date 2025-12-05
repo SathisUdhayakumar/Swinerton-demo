@@ -29,19 +29,19 @@ const projects: Project[] = [
     id: "alpha",
     name: "Clemson-210 Keowee Trl",
     costCodes: [
-      { code: "0400", name: "Materials", spent: 8500, budget: 10000 },
-      { code: "0410", name: "Equipment", spent: 2000, budget: 5000 },
+      { code: "0400", name: "Materials", spent: 847500, budget: 1250000 },
+      { code: "0410", name: "Equipment", spent: 325000, budget: 750000 },
     ],
     purchaseOrders: [
-      { number: "PO-001", name: "General Materials PO", remaining: 500 },
+      { number: "PO-001", name: "General Materials PO", remaining: 125000 },
     ],
   },
   {
     id: "beta",
     name: "DFW Terminal F",
     costCodes: [
-      { code: "0500", name: "Labor", spent: 1000, budget: 5000 },
-      { code: "0510", name: "Subcontracts", spent: 3000, budget: 15000 },
+      { code: "0500", name: "Labor", spent: 1850000, budget: 2500000 },
+      { code: "0510", name: "Subcontracts", spent: 4200000, budget: 5750000 },
     ],
     purchaseOrders: [],
   },
