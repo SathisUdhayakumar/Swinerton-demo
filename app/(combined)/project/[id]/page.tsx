@@ -659,7 +659,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
 
       {/* PO Details Modal */}
       <Dialog open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
-        <DialogContent className="max-w-7xl w-[98vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="!max-w-[95vw] !w-[95vw] max-h-[90vh] overflow-y-auto p-6" style={{ maxWidth: '95vw', width: '95vw' }}>
           {selectedPO && (
             <>
               <DialogHeader>
@@ -743,27 +743,27 @@ export default function ProjectDetailPage({ params }: PageProps) {
                     <CardTitle className="text-lg">Line Items</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
+                    <div className="overflow-x-auto -mx-6 px-6">
+                      <table className="w-full min-w-full">
                         <thead>
                           <tr className="border-b border-slate-200">
-                            <th className="text-left py-2 px-3 text-sm font-medium text-slate-500">Description</th>
-                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Quantity</th>
-                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Unit Price</th>
-                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Total</th>
-                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Delivered</th>
-                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500">Remaining</th>
+                            <th className="text-left py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Description</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Quantity</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Unit Price</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Total</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Delivered</th>
+                            <th className="text-right py-2 px-3 text-sm font-medium text-slate-500 whitespace-nowrap">Remaining</th>
                           </tr>
                         </thead>
                         <tbody>
                           {selectedPO.lineItems.map((item) => (
                             <tr key={item.id} className="border-b border-slate-100">
                               <td className="py-2 px-3 text-sm text-slate-700">{item.description}</td>
-                              <td className="py-2 px-3 text-sm text-right text-slate-600">{item.quantity} {item.unit}</td>
-                              <td className="py-2 px-3 text-sm text-right text-slate-600">{formatCurrency(item.unitPrice)}</td>
-                              <td className="py-2 px-3 text-sm text-right text-slate-900 font-medium">{formatCurrency(item.totalPrice)}</td>
-                              <td className="py-2 px-3 text-sm text-right text-emerald-600">{item.delivered}</td>
-                              <td className="py-2 px-3 text-sm text-right text-slate-600">{item.remaining}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600 whitespace-nowrap">{item.quantity} {item.unit}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600 whitespace-nowrap">{formatCurrency(item.unitPrice)}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-900 font-medium whitespace-nowrap">{formatCurrency(item.totalPrice)}</td>
+                              <td className="py-2 px-3 text-sm text-right text-emerald-600 whitespace-nowrap">{item.delivered}</td>
+                              <td className="py-2 px-3 text-sm text-right text-slate-600 whitespace-nowrap">{item.remaining}</td>
                             </tr>
                           ))}
                         </tbody>
