@@ -65,7 +65,7 @@ export default function CaptureReceiptPage() {
       setProjects([
         {
           id: 'alpha',
-          name: 'Project Alpha',
+          name: 'Clemson-210 Keowee Trl',
           code: 'ALPHA-2025',
           budget: 500000,
           spent: 125000,

@@ -27,7 +27,7 @@ interface Project {
 const projects: Project[] = [
   {
     id: "alpha",
-    name: "Project Alpha",
+    name: "Clemson-210 Keowee Trl",
     costCodes: [
       { code: "0400", name: "Materials", spent: 8500, budget: 10000 },
       { code: "0410", name: "Equipment", spent: 2000, budget: 5000 },

@@ -17,7 +17,7 @@ import {
 export const mockProjects: Project[] = [
   {
     id: 'alpha',
-    name: 'Project Alpha',
+    name: 'Clemson-210 Keowee Trl',
     code: 'ALPHA-2025',
     budget: 500000,
     spent: 125000,
@@ -71,7 +71,7 @@ export const mockPOs: PurchaseOrder[] = [
     id: 'po-001',
     poNumber: '552',
     vendor: 'SteelCo',
-    project: 'Project Alpha',
+    project: 'Clemson-210 Keowee Trl',
     projectId: 'alpha',
     deliveryWindow: {
       start: '2025-12-01',
@@ -141,7 +141,7 @@ export let mockDeliveries: Delivery[] = [
     id: 'del-001',
     bolNumber: 'BOL-2025-1201-001',
     vendor: 'SteelCo',
-    project: 'Project Alpha',
+    project: 'Clemson-210 Keowee Trl',
     projectId: 'alpha',
     poNumber: '552',
     poId: 'po-001',
@@ -211,7 +211,7 @@ export let mockReceipts: Receipt[] = [
       { id: 'item-003', description: 'Wood Screws 3"', qty: 2, unitPrice: 12.50, total: 25.00, confidence: 0.90 },
     ],
     projectId: 'alpha',
-    projectName: 'Project Alpha',
+    projectName: 'Clemson-210 Keowee Trl',
     costCodeId: 'cc-001',
     costCodeName: 'Materials - General',
     status: 'logged',

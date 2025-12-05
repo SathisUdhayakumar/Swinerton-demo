@@ -36,7 +36,7 @@ interface KraneChatEmbedProps {
 const projects: Project[] = [
   {
     id: 'alpha',
-    name: 'Project Alpha',
+    name: 'Clemson-210 Keowee Trl',
     costCodes: [
       { id: 'cc-001', code: '6100', name: 'Materials - General' },
       { id: 'cc-002', code: '6200', name: 'Materials - Steel' },
