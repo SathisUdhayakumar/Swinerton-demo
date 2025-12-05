@@ -659,7 +659,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
 
       {/* PO Details Modal */}
       <Dialog open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
           {selectedPO && (
             <>
               <DialogHeader>
