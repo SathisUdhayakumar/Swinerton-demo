@@ -34,3 +34,4 @@ export function SegmentControl({ tabs, activeTab, onTabChange }: SegmentControlP
   );
 }
 
+
