@@ -114,6 +114,20 @@ const purchaseOrders = [
   { id: 'PO-2024-002', vendor: 'Steel Solutions Inc', amount: 340000, status: 'Active', date: '2024-11-20' },
   { id: 'PO-2024-003', vendor: 'BuildRight Materials', amount: 89000, status: 'Completed', date: '2024-10-28' },
   { id: 'PO-2024-004', vendor: 'Premier Equipment Rental', amount: 56000, status: 'Active', date: '2024-12-01' },
+  { id: 'PO-2024-005', vendor: 'Texas Rebar & Wire', amount: 178500, status: 'Active', date: '2024-11-22' },
+  { id: 'PO-2024-006', vendor: 'Gulf Coast Aggregates', amount: 95000, status: 'Active', date: '2024-11-25' },
+  { id: 'PO-2024-007', vendor: 'Metro Lumber Supply', amount: 67500, status: 'Completed', date: '2024-10-15' },
+  { id: 'PO-2024-008', vendor: 'Precision Formwork Inc', amount: 215000, status: 'Active', date: '2024-11-28' },
+  { id: 'PO-2024-009', vendor: 'Allied Waterproofing', amount: 48000, status: 'Pending', date: '2024-12-05' },
+  { id: 'PO-2024-010', vendor: 'Sunbelt Rentals', amount: 82000, status: 'Active', date: '2024-11-30' },
+  { id: 'PO-2024-011', vendor: 'Hilti Corporation', amount: 34500, status: 'Completed', date: '2024-10-20' },
+  { id: 'PO-2024-012', vendor: 'Martin Marietta Materials', amount: 156000, status: 'Active', date: '2024-12-02' },
+  { id: 'PO-2024-013', vendor: 'Vulcan Materials Company', amount: 198000, status: 'Active', date: '2024-11-18' },
+  { id: 'PO-2024-014', vendor: 'White Cap Supply', amount: 45000, status: 'Pending', date: '2024-12-08' },
+  { id: 'PO-2024-015', vendor: 'United Rentals', amount: 112000, status: 'Active', date: '2024-11-26' },
+  { id: 'PO-2024-016', vendor: 'HD Supply', amount: 73500, status: 'Completed', date: '2024-10-25' },
+  { id: 'PO-2024-017', vendor: 'CEMEX USA', amount: 285000, status: 'Active', date: '2024-12-01' },
+  { id: 'PO-2024-018', vendor: 'Gerdau Ameristeel', amount: 420000, status: 'Active', date: '2024-11-12' },
 ];
 
 // Sample deliveries data
