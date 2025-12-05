@@ -12,7 +12,7 @@ export default function CombinedLayout({
       {/* Top Header - Full Width */}
       <header className="h-16 bg-[#1e3a5f] border-b border-[#2a4a6f] flex items-center justify-between px-6 flex-shrink-0">
         {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link href="/projects" className="flex items-center gap-3">
           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
             {/* Yellow Pyramid Icon */}
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
