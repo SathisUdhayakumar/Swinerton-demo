@@ -45,7 +45,7 @@ function getRiskLevel(spent: number, budget: number) {
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link href={`/project/${project.id}`} className="block">
+    <Link href={`/project/${project.id}?tab=budget`} className="block">
       <Card className="bg-white border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer">
         <CardContent className="p-4">
         {/* Header with Risk Tag */}

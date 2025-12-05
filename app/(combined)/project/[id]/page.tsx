@@ -2,7 +2,7 @@
 
 import { useState, use, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
@@ -151,9 +151,20 @@ const purchaseOrders: PurchaseOrder[] = [
 export default function ProjectDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabId>('materials');
+  const searchParams = useSearchParams();
+  
+  // Get initial tab from URL search params, default to 'budget' if coming from dashboard
+  const tabFromUrl = searchParams?.get('tab') as TabId;
+  const [activeTab, setActiveTab] = useState<TabId>(tabFromUrl || 'budget');
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [isDeliveriesLoading, setIsDeliveriesLoading] = useState(true);
+
+  // Update tab when URL search params change
+  useEffect(() => {
+    if (tabFromUrl && ['materials', 'budget', 'po', 'deliveries'].includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
 
   const project = projects[id];
   const budgetItems = budgetData[id] || [];
