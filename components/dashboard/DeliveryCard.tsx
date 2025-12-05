@@ -1,11 +1,20 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Delivery, DeliveryStatus } from '@/types';
 
 interface DeliveryCardProps {
   delivery: Delivery;
+}
+
+function isNewDelivery(deliveryId: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const viewed = localStorage.getItem('viewedItems');
+  if (!viewed) return true;
+  const parsed = JSON.parse(viewed);
+  return !(parsed.deliveries || []).includes(deliveryId);
 }
 
 function StatusBadge({ status }: { status: DeliveryStatus }) {
@@ -35,14 +44,38 @@ function StatusBadge({ status }: { status: DeliveryStatus }) {
 }
 
 export function DeliveryCard({ delivery }: DeliveryCardProps) {
+  const [isNew, setIsNew] = useState(false);
   const exactMatches = delivery.lines.filter((l) => l.matchStatus === 'exact').length;
   const issues = delivery.lines.filter(
     (l) => l.matchStatus !== 'exact' && l.matchStatus !== 'partial'
   ).length;
 
+  useEffect(() => {
+    setIsNew(isNewDelivery(delivery.id));
+  }, [delivery.id]);
+
+  const handleClick = () => {
+    if (isNew) {
+      // Mark as viewed
+      const viewed = localStorage.getItem('viewedItems');
+      const parsed = viewed ? JSON.parse(viewed) : { receipts: [], deliveries: [] };
+      if (!parsed.deliveries) parsed.deliveries = [];
+      if (!parsed.deliveries.includes(delivery.id)) {
+        parsed.deliveries.push(delivery.id);
+        localStorage.setItem('viewedItems', JSON.stringify(parsed));
+        setIsNew(false);
+      }
+    }
+  };
+
   return (
-    <Link href={`/delivery/${delivery.id}`}>
-      <Card className="bg-white border-slate-200 hover:border-blue-300 transition-all hover:shadow-lg cursor-pointer group">
+    <Link href={`/delivery/${delivery.id}`} onClick={handleClick}>
+      <Card className="bg-white border-slate-200 hover:border-blue-300 transition-all hover:shadow-lg cursor-pointer group relative">
+        {isNew && (
+          <span className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+            NEW
+          </span>
+        )}
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">

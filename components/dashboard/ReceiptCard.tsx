@@ -1,11 +1,20 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Receipt, ReceiptStatus } from '@/types';
 
 interface ReceiptCardProps {
   receipt: Receipt;
+}
+
+function isNewReceipt(receiptId: string): boolean {
+  if (typeof window === 'undefined') return false;
+  const viewed = localStorage.getItem('viewedItems');
+  if (!viewed) return true;
+  const parsed = JSON.parse(viewed);
+  return !(parsed.receipts || []).includes(receiptId);
 }
 
 function StatusBadge({ status }: { status: ReceiptStatus }) {
@@ -35,9 +44,34 @@ function StatusBadge({ status }: { status: ReceiptStatus }) {
 }
 
 export function ReceiptCard({ receipt }: ReceiptCardProps) {
+  const [isNew, setIsNew] = useState(false);
+
+  useEffect(() => {
+    setIsNew(isNewReceipt(receipt.id));
+  }, [receipt.id]);
+
+  const handleClick = () => {
+    if (isNew) {
+      // Mark as viewed
+      const viewed = localStorage.getItem('viewedItems');
+      const parsed = viewed ? JSON.parse(viewed) : { receipts: [], deliveries: [] };
+      if (!parsed.receipts) parsed.receipts = [];
+      if (!parsed.receipts.includes(receipt.id)) {
+        parsed.receipts.push(receipt.id);
+        localStorage.setItem('viewedItems', JSON.stringify(parsed));
+        setIsNew(false);
+      }
+    }
+  };
+
   return (
-    <Link href={`/receipt/${receipt.id}`}>
-      <Card className="bg-white border-slate-200 hover:border-emerald-300 transition-all hover:shadow-lg cursor-pointer group">
+    <Link href={`/receipt/${receipt.id}`} onClick={handleClick}>
+      <Card className="bg-white border-slate-200 hover:border-emerald-300 transition-all hover:shadow-lg cursor-pointer group relative">
+        {isNew && (
+          <span className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
+            NEW
+          </span>
+        )}
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">
