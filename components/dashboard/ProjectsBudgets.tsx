@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getRiskLevel, formatCurrency, formatPercent } from '@/lib/utils';
 
@@ -164,29 +165,34 @@ function ProjectCard({ project }: { project: Project }) {
   }, 'low' as 'low' | 'medium' | 'high');
 
   return (
-    <Card className={`bg-white border-slate-200 shadow-sm ${
-      highestRisk === 'high' ? 'border-l-4 border-l-red-500' : ''
-    }`}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800">{project.name}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <ProjectRiskChip level={highestRisk} />
+    <Link href={`/project/${project.id}`} className="block">
+      <Card className={`bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer ${
+        highestRisk === 'high' ? 'border-l-4 border-l-red-500' : ''
+      }`}>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800">{project.name}</h3>
+              <div className="flex items-center gap-2 mt-1">
+                <ProjectRiskChip level={highestRisk} />
+              </div>
             </div>
+            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="pt-0">
-        {/* Cost Codes */}
-        <div>
-          {project.costCodes.map((cc) => (
-            <CostCodeRow key={cc.code} costCode={cc} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        
+        <CardContent className="pt-0">
+          {/* Cost Codes */}
+          <div>
+            {project.costCodes.map((cc) => (
+              <CostCodeRow key={cc.code} costCode={cc} />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
