@@ -235,7 +235,7 @@ export function ProjectsBudgets() {
     <section className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-800">Projects & Budgets</h2>
+          <h2 className="text-xl font-bold text-slate-800">Material Tracking</h2>
           <p className="text-sm text-slate-500 mt-0.5">Track spending across cost codes</p>
         </div>
       </div>
