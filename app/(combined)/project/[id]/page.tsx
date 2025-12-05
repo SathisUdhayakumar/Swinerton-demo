@@ -112,18 +112,18 @@ export default function ProjectDetailPage({ params }: PageProps) {
         </div>
         
         {/* Summary Stats */}
-        <div className="flex items-center gap-6 text-sm">
-          <div className="text-center">
-            <p className="text-slate-500">Total Budget</p>
-            <p className="text-lg font-bold text-slate-800">{formatCurrency(totalBudget)}</p>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-6 py-4 flex items-center gap-8">
+          <div className="text-center px-4 border-r border-slate-200">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Total Budget</p>
+            <p className="text-xl font-bold text-slate-800 mt-1">{formatCurrency(totalBudget)}</p>
           </div>
-          <div className="text-center">
-            <p className="text-slate-500">Total Spent</p>
-            <p className="text-lg font-bold text-slate-800">{formatCurrency(totalSpent)}</p>
+          <div className="text-center px-4 border-r border-slate-200">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Total Spent</p>
+            <p className="text-xl font-bold text-slate-800 mt-1">{formatCurrency(totalSpent)}</p>
           </div>
-          <div className="text-center">
-            <p className="text-slate-500">Remaining</p>
-            <p className="text-lg font-bold text-emerald-600">{formatCurrency(totalRemaining)}</p>
+          <div className="text-center px-4">
+            <p className="text-xs text-slate-500 uppercase tracking-wider">Remaining</p>
+            <p className="text-xl font-bold text-emerald-600 mt-1">{formatCurrency(totalRemaining)}</p>
           </div>
         </div>
       </div>
