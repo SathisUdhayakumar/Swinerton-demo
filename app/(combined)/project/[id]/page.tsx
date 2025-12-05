@@ -28,7 +28,6 @@ interface PurchaseOrder {
 type TabId = 'materials' | 'budget' | 'po' | 'deliveries';
 
 const tabs: { id: TabId; label: string }[] = [
-  { id: 'materials', label: 'Materials' },
   { id: 'budget', label: 'Budget vs Spent' },
   { id: 'po', label: 'PO' },
   { id: 'deliveries', label: 'Deliveries' },
