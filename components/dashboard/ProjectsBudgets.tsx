@@ -131,7 +131,7 @@ function CostCodeRow({ costCode }: { costCode: CostCode }) {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-slate-800">
-            {costCode.code} – {costCode.name}
+            {costCode.name}
           </span>
         </div>
         <RiskBadge level={risk.level} used={risk.used} />
