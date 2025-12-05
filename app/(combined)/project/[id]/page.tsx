@@ -228,45 +228,49 @@ export default function ProjectDetailPage({ params }: PageProps) {
             <h1 className="text-2xl font-bold text-slate-900">Project Overview</h1>
             <p className="text-sm text-slate-500 mt-1">{project.name}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50"
-              onClick={() => router.push(`/project/${id}/receipts`)}
-            >
-              Receipt
-            </Button>
-            <Button
-              variant="outline"
-              className="border-slate-300 text-slate-700 hover:bg-slate-50"
-              onClick={() => router.push(`/project/${id}/deliveries`)}
-            >
-              BOL
-            </Button>
-          </div>
+          {activeTab !== 'materials' && (
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                onClick={() => router.push(`/project/${id}/receipts`)}
+              >
+                Receipt
+              </Button>
+              <Button
+                variant="outline"
+                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                onClick={() => router.push(`/project/${id}/deliveries`)}
+              >
+                BOL
+              </Button>
+            </div>
+          )}
         </div>
 
-        {/* Summary Stats */}
-        <Card className="bg-slate-50 border-slate-200 mb-6">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Budget</p>
-                <p className="text-lg font-semibold text-slate-900">{formatCurrency(totalBudget)}</p>
+        {/* Summary Stats - Hidden on Materials tab */}
+        {activeTab !== 'materials' && (
+          <Card className="bg-slate-50 border-slate-200 mb-6">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Total Budget</p>
+                  <p className="text-lg font-semibold text-slate-900">{formatCurrency(totalBudget)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Total Spent</p>
+                  <p className="text-lg font-semibold text-slate-900">{formatCurrency(totalSpent)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 mb-1">Remaining</p>
+                  <p className={`text-lg font-semibold ${totalRemaining < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                    {formatCurrency(totalRemaining)}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Spent</p>
-                <p className="text-lg font-semibold text-slate-900">{formatCurrency(totalSpent)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Remaining</p>
-                <p className={`text-lg font-semibold ${totalRemaining < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                  {formatCurrency(totalRemaining)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Segment Control */}
@@ -503,10 +507,12 @@ export default function ProjectDetailPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Receipts & Deliveries Section */}
-      <div className="mt-8">
-        <ReceiptsDeliveriesSection projectId={id} initialViewMode="all" />
-      </div>
+      {/* Receipts & Deliveries Section - Hidden on Materials tab */}
+      {activeTab !== 'materials' && (
+        <div className="mt-8">
+          <ReceiptsDeliveriesSection projectId={id} initialViewMode="all" />
+        </div>
+      )}
     </div>
   );
 }
