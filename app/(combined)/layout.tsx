@@ -12,15 +12,15 @@ export default function CombinedLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             {/* Logo & Title */}
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/dashboard" className="flex items-center gap-3">
               {/* Swinerton Official Logo */}
               <img 
                 src="/swinerton-logo.png" 
                 alt="Swinerton" 
-                className="h-10 w-auto"
+                className="h-14 w-auto"
               />
-              <div className="hidden sm:block border-l border-slate-300 pl-2">
-                <p className="text-[#1e3a5f] text-xs font-medium tracking-wide">Self Perform</p>
+              <div className="hidden sm:block border-l border-slate-300 pl-3">
+                <p className="text-[#1e3a5f] text-sm font-medium tracking-wide">Self Perform</p>
               </div>
             </Link>
 
