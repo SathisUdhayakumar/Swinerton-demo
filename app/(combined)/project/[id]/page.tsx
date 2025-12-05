@@ -300,7 +300,11 @@ export default function ProjectDetailPage({ params }: PageProps) {
                     <tbody>
                       {purchaseOrders.map((po) => (
                         <tr key={po.id} className="border-b border-slate-100 hover:bg-slate-50">
-                          <td className="py-3 px-4 text-sm font-medium text-slate-800">{po.id}</td>
+                          <td className="py-3 px-4">
+                          <Link href={`/po/${po.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                            {po.id}
+                          </Link>
+                        </td>
                           <td className="py-3 px-4 text-sm text-slate-600">{po.vendor}</td>
                           <td className="py-3 px-4 text-sm font-medium text-slate-800">{formatCurrency(po.amount)}</td>
                           <td className="py-3 px-4 text-sm text-slate-600">{po.date}</td>
