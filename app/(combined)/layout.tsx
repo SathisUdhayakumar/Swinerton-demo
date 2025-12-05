@@ -13,14 +13,21 @@ export default function CombinedLayout({
           <div className="flex items-center justify-between h-14">
             {/* Logo & Title */}
             <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              {/* Swinerton Logo Icon - Two figures representing partnership/collaboration */}
+              <div className="w-11 h-11 bg-[#1e3a5f] rounded flex items-center justify-center overflow-hidden">
+                <svg className="w-8 h-8" viewBox="0 0 40 40" fill="none">
+                  {/* Two figures side by side */}
+                  <circle cx="14" cy="12" r="4" fill="#8faabe"/>
+                  <path d="M8 28c0-4 3-7 6-7s6 3 6 7" stroke="#8faabe" strokeWidth="2" fill="none"/>
+                  <circle cx="26" cy="12" r="4" fill="white"/>
+                  <path d="M20 28c0-4 3-7 6-7s6 3 6 7" stroke="white" strokeWidth="2" fill="none"/>
+                  {/* Raised arm gesture */}
+                  <path d="M28 16 L34 8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-slate-800 font-bold text-lg leading-none">Swinerton</h1>
-                <p className="text-slate-500 text-xs">Field Operations</p>
+                <h1 className="text-[#1e3a5f] text-xl tracking-widest uppercase" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, letterSpacing: '0.15em' }}>Swinerton</h1>
+                <p className="text-slate-400 text-[10px] tracking-widest uppercase">Field Operations</p>
               </div>
             </Link>
 
