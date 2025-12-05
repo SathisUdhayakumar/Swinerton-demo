@@ -197,9 +197,9 @@ export async function POST(request: NextRequest) {
       };
 
       const avgConfidence = (
-        mockResult.merchantConfidence +
-        mockResult.dateConfidence +
-        mockResult.totalConfidence
+        (mockResult.merchantConfidence ?? 0.85) +
+        (mockResult.dateConfidence ?? 0.85) +
+        (mockResult.totalConfidence ?? 0.85)
       ) / 3;
 
       const result: OCRResult = {

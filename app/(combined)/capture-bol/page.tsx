@@ -238,7 +238,7 @@ export default function CaptureBOLPage() {
                   <div
                     key={line.id}
                     className={`p-3 rounded-lg border ${
-                      line.confidence < 0.8
+                      (line.confidence ?? 0) < 0.8
                         ? 'bg-red-50 border-red-200'
                         : 'bg-slate-50 border-slate-200'
                     }`}
@@ -247,7 +247,7 @@ export default function CaptureBOLPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-xs text-slate-500">#{idx + 1}</span>
-                          <ConfidenceBadge confidence={line.confidence} />
+                          <ConfidenceBadge confidence={line.confidence ?? 0} />
                         </div>
                         <p className="text-slate-700 text-sm truncate">{line.description}</p>
                       </div>

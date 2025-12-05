@@ -341,7 +341,7 @@ export default function DeliveryDetailPage({ params }: PageProps) {
                 <div className="w-2 h-2 mt-1.5 bg-amber-500 rounded-full" />
                 <div>
                   <p className="text-sm text-slate-700">Last Updated</p>
-                  <p className="text-xs text-slate-500">{new Date(delivery.updatedAt).toLocaleString()}</p>
+                  <p className="text-xs text-slate-500">{delivery.updatedAt ? new Date(delivery.updatedAt).toLocaleString() : 'N/A'}</p>
                 </div>
               </div>
               {delivery.approvedBy && (

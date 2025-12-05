@@ -1,1 +1,288 @@
+// ============== Purchase Order Types ==============
 
+export interface POLine {
+  id: string;
+  description: string;
+  qty: number;
+  unit: string;
+  unitPrice?: number;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  poNumber: string;
+  vendor: string;
+  project: string;
+  projectId: string;
+  deliveryWindow: {
+    start: string;
+    end: string;
+  };
+  lines: POLine[];
+  status: 'open' | 'completed' | 'cancelled';
+  createdAt: string;
+}
+
+// ============== BOL Types ==============
+
+export interface BOLLine {
+  id: string;
+  description: string;
+  qty: number;
+  unit: string;
+  confidence?: number;
+  rawText?: string;
+}
+
+export interface ParsedBOL {
+  bolNumber: string;
+  vendor: string;
+  deliveryDate: string;
+  poReference?: string;
+  lines: BOLLine[];
+  confidence: number;
+  rawImageUrl?: string;
+}
+
+// ============== Delivery Types ==============
+
+export type DeliveryStatus = 
+  | 'verified' 
+  | 'approved' 
+  | 'pending_approval' 
+  | 'needs_review' 
+  | 'unmatched' 
+  | 'rejected';
+
+export type MatchStatus = 'exact' | 'partial' | 'over' | 'under' | 'unmatched';
+
+export interface DeliveryLine {
+  id: string;
+  bolLine: BOLLine;
+  poLine?: POLine;
+  qtyDelivered: number;
+  qtyOrdered: number;
+  qtyDelta: number;
+  matchStatus: MatchStatus;
+  matchConfidence: number;
+  flagged?: boolean;
+  flagReason?: string;
+}
+
+export interface Delivery {
+  id: string;
+  bolNumber: string;
+  vendor: string;
+  project: string;
+  projectId?: string;
+  poNumber?: string;
+  poId?: string;
+  deliveryDate: string;
+  status: DeliveryStatus;
+  matchScore: number;
+  lines: DeliveryLine[];
+  parsedBOL: ParsedBOL;
+  createdAt: string;
+  updatedAt?: string;
+  approvedBy?: string;
+  notes?: string;
+  cmicDeliveryId?: string;
+}
+
+// ============== Receipt Types ==============
+
+export type ReceiptStatus = 
+  | 'logged' 
+  | 'pending_approval' 
+  | 'approved' 
+  | 'rejected' 
+  | 'duplicate'
+  | 'needs_review';
+
+export interface ReceiptItem {
+  id: string;
+  description: string;
+  qty: number;
+  unitPrice: number;
+  total: number;
+  confidence: number;
+}
+
+export interface Receipt {
+  id: string;
+  merchant: string;
+  date: string;
+  total: number;
+  tax: number;
+  items: ReceiptItem[];
+  status: ReceiptStatus;
+  projectId?: string;
+  projectName?: string;
+  costCodeId?: string;
+  costCodeName?: string;
+  confidence: number;
+  createdAt: string;
+  createdBy?: string;
+  updatedAt?: string;
+  approvedBy?: string;
+  notes?: string;
+  cmicLineId?: string;
+  imageUrl?: string;
+}
+
+// ============== Project Types ==============
+
+export interface CostCode {
+  id?: string;
+  code: string;
+  description?: string;
+  name?: string;
+  budget: number;
+  spent: number;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  code?: string;
+  budget?: number;
+  spent?: number;
+  costCodes: CostCode[];
+}
+
+// ============== User Types ==============
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+// ============== Audit Log Types ==============
+
+export interface AuditLog {
+  id: string;
+  entityType: 'delivery' | 'receipt' | 'po';
+  entityId: string;
+  action: string;
+  performedBy: string;
+  timestamp: string;
+  details?: Record<string, any>;
+}
+
+// ============== Match Result Types ==============
+
+export interface MatchResult {
+  po: PurchaseOrder;
+  matchScore: number;
+  matchedBy: 'po_number' | 'vendor_window' | 'fuzzy';
+  lineMatches: { bolLineId: string; poLineId: string; confidence: number }[];
+}
+
+// ============== Project Suggestion Types ==============
+
+export interface ProjectSuggestion {
+  projectId: string;
+  projectName: string;
+  costCodeId?: string;
+  confidence: number;
+  reason: string;
+}
+
+// ============== SSE Event Types ==============
+
+export interface SSEDeliveryEvent {
+  type: 'created' | 'updated' | 'deleted';
+  delivery: Delivery;
+  timestamp: string;
+}
+
+export interface SSEReceiptEvent {
+  type: 'created' | 'updated' | 'deleted';
+  receipt: Receipt;
+  timestamp: string;
+}
+
+// ============== OCR Result Types ==============
+
+export interface OCRResult {
+  success: boolean;
+  type: 'receipt' | 'bol';
+  parsedReceipt?: ParsedReceipt;
+  parsedBOL?: ParsedBOL;
+  processingTime: number;
+  warnings?: string[];
+  error?: string;
+}
+
+// ============== Parsed Receipt Types ==============
+
+export interface ParsedReceipt {
+  merchant: string;
+  date: string;
+  total: number;
+  tax?: number;
+  items: ReceiptItem[];
+  confidence?: number;
+  merchantConfidence?: number;
+  dateConfidence?: number;
+  totalConfidence?: number;
+  taxConfidence?: number;
+  imageHash?: string;
+  rawText?: string;
+  rawImageUrl?: string;
+}
+
+// ============== Delivery Action Types ==============
+
+export type DeliveryAction = 
+  | 'approve' 
+  | 'reject' 
+  | 'reconcile' 
+  | 'flag_damage' 
+  | 'require_pm_approval' 
+  | 'request_return';
+
+export interface DeliveryActionPayload {
+  action: DeliveryAction;
+  notes?: string;
+  lineIds?: string[];
+}
+
+// ============== Receipt Action Types ==============
+
+export type ReceiptAction = 
+  | 'approve' 
+  | 'reject' 
+  | 'reconcile'
+  | 'flag_duplicate' 
+  | 'request_review'
+  | 'needs_review';
+
+export interface ReceiptActionPayload {
+  action: ReceiptAction;
+  notes?: string;
+}
+
+// ============== Chat Types ==============
+
+export interface ChatMessage {
+  id: string;
+  type: 'text' | 'image' | 'bol-result' | 'system' | 'receipt' | 'bol' | 'action';
+  content: string;
+  sender: 'user' | 'bot' | 'assistant' | 'system';
+  status?: 'sending' | 'sent' | 'error';
+  timestamp: string;
+  imageUrl?: string;
+  parsedBOL?: ParsedBOL;
+  parsedData?: ParsedReceipt | ParsedBOL;
+  matchedPO?: PurchaseOrder | null;
+  matchScore?: number;
+  receiptId?: string;
+  attachments?: {
+    type: 'receipt' | 'bol';
+    data: ParsedReceipt | ParsedBOL;
+  }[];
+  suggestions?: ProjectSuggestion | ProjectSuggestion[];
+}

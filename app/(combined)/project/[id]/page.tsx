@@ -12,28 +12,17 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatCurrency } from '@/lib/utils';
-import { Delivery, ParsedReceipt, ProjectSuggestion, Project, CostCode } from '@/types';
+import { Delivery, ParsedReceipt, ProjectSuggestion, CostCode } from '@/types';
+import type { Project } from '@/types';
 import { MaterialTable } from '@/components/material/MaterialTable';
 import { BOLvsPOCompare } from '@/components/compare/BOLvsPOCompare';
 import { ReceiptUpload } from '@/components/capture/ReceiptUpload';
 import { BOLUpload } from '@/components/capture/BOLUpload';
 import { ReceiptPreviewModal } from '@/components/ui/ReceiptPreviewModal';
-import { ParsedBOL, PurchaseOrder } from '@/types';
+import { ParsedBOL } from '@/types';
+import type { PurchaseOrder } from '@/types';
 
-interface PurchaseOrder {
-  id: string;
-  poNumber: string;
-  vendor: string;
-  project: string;
-  projectId: string;
-  deliveryWindow: {
-    start: string;
-    end: string;
-  };
-  lines: any[];
-  status: string;
-  createdAt: string;
-}
+// PurchaseOrder type is imported from @/types
 
 type TabId = 'materials' | 'po' | 'deliveries';
 
@@ -46,18 +35,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-interface CostCode {
-  code: string;
-  name: string;
-  spent: number;
-  budget: number;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  costCodes: CostCode[];
-}
+// CostCode and Project types are imported from @/types
 
 const projects: Record<string, Project> = {
   'alpha': {

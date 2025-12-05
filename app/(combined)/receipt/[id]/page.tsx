@@ -465,7 +465,7 @@ export default function ReceiptDetailPage({ params }: PageProps) {
                 <div className="w-2 h-2 mt-1.5 bg-amber-500 rounded-full" />
                 <div>
                   <p className="text-sm text-slate-700">Last Updated</p>
-                  <p className="text-xs text-slate-500">{new Date(receipt.updatedAt).toLocaleString()}</p>
+                  <p className="text-xs text-slate-500">{receipt.updatedAt ? new Date(receipt.updatedAt).toLocaleString() : 'N/A'}</p>
                 </div>
               </div>
               {receipt.approvedBy && (
