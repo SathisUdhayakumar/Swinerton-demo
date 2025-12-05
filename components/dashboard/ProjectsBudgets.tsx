@@ -172,9 +172,6 @@ function ProjectCard({ project }: { project: Project }) {
           <div>
             <h3 className="text-lg font-semibold text-slate-800">{project.name}</h3>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                {project.costCodes.length} cost codes
-              </span>
               <ProjectRiskChip level={highestRisk} />
             </div>
           </div>
@@ -184,9 +181,6 @@ function ProjectCard({ project }: { project: Project }) {
       <CardContent className="pt-0">
         {/* Cost Codes */}
         <div className="mb-4">
-          <h4 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
-            Cost Codes
-          </h4>
           {project.costCodes.map((cc) => (
             <CostCodeRow key={cc.code} costCode={cc} />
           ))}
