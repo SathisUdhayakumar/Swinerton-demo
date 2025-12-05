@@ -45,6 +45,69 @@ const projects: Record<string, Project> = {
   },
 };
 
+// Hierarchical budget data structure
+interface BudgetLineItem {
+  code: string;
+  description: string;
+  budget: number;
+  spent: number;
+  level: number;
+  isHeader?: boolean;
+}
+
+const budgetData: Record<string, BudgetLineItem[]> = {
+  'alpha': [
+    { code: '07', description: 'DIRECT WORK', budget: 2000000, spent: 1172500, level: 0, isHeader: true },
+    { code: '0727', description: 'RAT SLABS', budget: 450000, spent: 312000, level: 1, isHeader: true },
+    { code: '07.727010', description: 'Fine Grade', budget: 85000, spent: 72000, level: 2 },
+    { code: '07.727013', description: 'Visqueen', budget: 45000, spent: 38500, level: 2 },
+    { code: '07.727024', description: 'Construction Joints', budget: 120000, spent: 95000, level: 2 },
+    { code: '07.727030', description: 'Concrete', budget: 150000, spent: 78500, level: 2 },
+    { code: '07.727040', description: 'Wet Finish', budget: 50000, spent: 28000, level: 2 },
+    { code: '0730', description: 'MAT FOUNDATION', budget: 680000, spent: 425000, level: 1, isHeader: true },
+    { code: '07.730005', description: 'Concrete Column Templates', budget: 95000, spent: 82000, level: 2 },
+    { code: '07.730007', description: 'CMU/Curb/Wall Template', budget: 78000, spent: 65000, level: 2 },
+    { code: '07.730010', description: 'Fine Grade and Hand Clean', budget: 45000, spent: 38000, level: 2 },
+    { code: '07.730024', description: 'Form Construction Joints', budget: 112000, spent: 78000, level: 2 },
+    { code: '07.730028', description: 'Depress/hanging Edge Forms', budget: 85000, spent: 52000, level: 2 },
+    { code: '07.730030', description: 'Concrete', budget: 185000, spent: 82000, level: 2 },
+    { code: '07.730040', description: 'Wet Finish', budget: 80000, spent: 28000, level: 2 },
+    { code: '0731', description: 'SLAB ON GRADE', budget: 320000, spent: 185500, level: 1, isHeader: true },
+    { code: '07.731013', description: 'Visqueen', budget: 65000, spent: 42000, level: 2 },
+    { code: '07.731027', description: 'Edge Forms', budget: 95000, spent: 68500, level: 2 },
+    { code: '07.731030', description: 'Concrete', budget: 160000, spent: 75000, level: 2 },
+    { code: '0732', description: 'SUSPENDED CONCRETE DECKS', budget: 550000, spent: 250000, level: 1, isHeader: true },
+    { code: '07.732007', description: 'CMU/Curb/Wall Template', budget: 42000, spent: 18000, level: 2 },
+    { code: '07.732011', description: 'S/S Typ Deck 6ft - 12ft', budget: 85000, spent: 45000, level: 2 },
+    { code: '07.732012', description: 'S/S High Deck 12ft - 20ft', budget: 95000, spent: 52000, level: 2 },
+    { code: '07.732013', description: 'Set/Strip Handset, 21ft High or more', budget: 78000, spent: 35000, level: 2 },
+    { code: '07.732024', description: 'Form Construction Joint', budget: 65000, spent: 28000, level: 2 },
+    { code: '07.732030', description: 'Concrete', budget: 125000, spent: 52000, level: 2 },
+    { code: '07.732040', description: 'Wet Finish', budget: 60000, spent: 20000, level: 2 },
+  ],
+  'beta': [
+    { code: '07', description: 'DIRECT WORK', budget: 8250000, spent: 6050000, level: 0, isHeader: true },
+    { code: '0727', description: 'RAT SLABS', budget: 1850000, spent: 1420000, level: 1, isHeader: true },
+    { code: '07.727010', description: 'Fine Grade', budget: 320000, spent: 285000, level: 2 },
+    { code: '07.727013', description: 'Visqueen', budget: 180000, spent: 145000, level: 2 },
+    { code: '07.727024', description: 'Construction Joints', budget: 450000, spent: 380000, level: 2 },
+    { code: '07.727030', description: 'Concrete', budget: 620000, spent: 420000, level: 2 },
+    { code: '07.727040', description: 'Wet Finish', budget: 280000, spent: 190000, level: 2 },
+    { code: '0730', description: 'MAT FOUNDATION', budget: 2400000, spent: 1780000, level: 1, isHeader: true },
+    { code: '07.730005', description: 'Concrete Column Templates', budget: 380000, spent: 320000, level: 2 },
+    { code: '07.730007', description: 'CMU/Curb/Wall Template', budget: 290000, spent: 245000, level: 2 },
+    { code: '07.730030', description: 'Concrete', budget: 850000, spent: 620000, level: 2 },
+    { code: '07.730040', description: 'Wet Finish', budget: 420000, spent: 295000, level: 2 },
+    { code: '07.730050', description: 'Curing', budget: 460000, spent: 300000, level: 2 },
+    { code: '0732', description: 'SUSPENDED CONCRETE DECKS', budget: 4000000, spent: 2850000, level: 1, isHeader: true },
+    { code: '07.732011', description: 'S/S Typ Deck 6ft - 12ft', budget: 680000, spent: 520000, level: 2 },
+    { code: '07.732012', description: 'S/S High Deck 12ft - 20ft', budget: 920000, spent: 680000, level: 2 },
+    { code: '07.732030', description: 'Concrete', budget: 1450000, spent: 980000, level: 2 },
+    { code: '07.732040', description: 'Wet Finish', budget: 550000, spent: 380000, level: 2 },
+    { code: '07.732043', description: 'Reshore Decks', budget: 400000, spent: 290000, level: 2 },
+  ],
+};
+
 // Sample PO data
 const purchaseOrders = [
   { id: 'PO-2024-001', vendor: 'ABC Concrete Supply', amount: 125000, status: 'Active', date: '2024-11-15' },
@@ -89,8 +152,11 @@ export default function ProjectDetailPage({ params }: PageProps) {
     );
   }
 
-  const totalBudget = project.costCodes.reduce((sum, cc) => sum + cc.budget, 0);
-  const totalSpent = project.costCodes.reduce((sum, cc) => sum + cc.spent, 0);
+  // Get totals from the level 0 (DIRECT WORK) item
+  const projectBudgetItems = budgetData[id] || [];
+  const directWorkItem = projectBudgetItems.find(item => item.level === 0);
+  const totalBudget = directWorkItem?.budget || project.costCodes.reduce((sum, cc) => sum + cc.budget, 0);
+  const totalSpent = directWorkItem?.spent || project.costCodes.reduce((sum, cc) => sum + cc.spent, 0);
   const totalRemaining = totalBudget - totalSpent;
 
   return (
@@ -151,61 +217,63 @@ export default function ProjectDetailPage({ params }: PageProps) {
         {activeTab === 'budget' && (
           <div className="space-y-4">
             <Card className="bg-white border-slate-200 shadow-sm">
-              <CardHeader className="pb-2">
-                <h3 className="text-lg font-semibold text-slate-800">Budget Breakdown</h3>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {project.costCodes.map((cc) => {
-                    const risk = getRiskLevel(cc.spent, cc.budget);
-                    const progressPercent = Math.min((cc.spent / cc.budget) * 100, 100);
-                    const remaining = cc.budget - cc.spent;
-                    
-                    const progressColor = {
-                      low: 'bg-emerald-500',
-                      medium: 'bg-amber-500',
-                      high: 'bg-red-500',
-                    }[risk.level];
-
-                    return (
-                      <div key={cc.code} className="py-4 border-b border-slate-100 last:border-0">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-base font-medium text-slate-800">{cc.name}</span>
-                          <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                            risk.level === 'low' ? 'bg-emerald-100 text-emerald-700' :
-                            risk.level === 'medium' ? 'bg-amber-100 text-amber-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
-                            {risk.used.toFixed(0)}% used
-                          </span>
-                        </div>
+              <CardContent className="p-0">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200">
+                        <th className="text-left py-4 px-6 text-sm font-semibold text-slate-700 w-1/2">Description</th>
+                        <th className="text-right py-4 px-6 text-sm font-semibold text-slate-700">Budget</th>
+                        <th className="text-right py-4 px-6 text-sm font-semibold text-slate-700">Spent</th>
+                        <th className="text-right py-4 px-6 text-sm font-semibold text-slate-700">Remaining</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(budgetData[id] || []).map((item, index) => {
+                        const remaining = item.budget - item.spent;
+                        const isLevel0 = item.level === 0;
+                        const isLevel1 = item.level === 1;
                         
-                        <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-3">
-                          <div
-                            className={`h-full rounded-full transition-all ${progressColor}`}
-                            style={{ width: `${progressPercent}%` }}
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <p className="text-slate-500">Budget</p>
-                            <p className="font-semibold text-slate-800">{formatCurrency(cc.budget)}</p>
-                          </div>
-                          <div>
-                            <p className="text-slate-500">Spent</p>
-                            <p className="font-semibold text-slate-800">{formatCurrency(cc.spent)}</p>
-                          </div>
-                          <div>
-                            <p className="text-slate-500">Remaining</p>
-                            <p className={`font-semibold ${remaining < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                        return (
+                          <tr 
+                            key={item.code} 
+                            className={`border-b border-slate-100 hover:bg-slate-50 ${
+                              isLevel0 ? 'bg-slate-100' : isLevel1 ? 'bg-slate-50/50' : ''
+                            }`}
+                          >
+                            <td className={`py-3 px-6 ${
+                              isLevel0 ? 'font-bold text-slate-900' : 
+                              isLevel1 ? 'font-semibold text-slate-800' : 
+                              'text-slate-600'
+                            }`}>
+                              <div style={{ paddingLeft: `${item.level * 24}px` }}>
+                                <span className={`${isLevel0 || isLevel1 ? 'text-[#1e3a5f]' : 'text-slate-500'} mr-2`}>
+                                  {item.code}
+                                </span>
+                                {isLevel0 || isLevel1 ? '' : '- '}
+                                {item.description}
+                              </div>
+                            </td>
+                            <td className={`py-3 px-6 text-right ${
+                              isLevel0 || isLevel1 ? 'font-semibold text-slate-800' : 'text-slate-700'
+                            }`}>
+                              {formatCurrency(item.budget)}
+                            </td>
+                            <td className={`py-3 px-6 text-right ${
+                              isLevel0 || isLevel1 ? 'font-semibold text-slate-800' : 'text-slate-700'
+                            }`}>
+                              {formatCurrency(item.spent)}
+                            </td>
+                            <td className={`py-3 px-6 text-right ${
+                              remaining < 0 ? 'text-red-600' : 'text-emerald-600'
+                            } ${isLevel0 || isLevel1 ? 'font-semibold' : ''}`}>
                               {formatCurrency(remaining)}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
