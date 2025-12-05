@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { formatCurrency } from '@/lib/utils';
-import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
 import { Delivery } from '@/types';
 import { MaterialTable } from '@/components/material/MaterialTable';
 
@@ -658,13 +657,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
           </div>
         )}
       </div>
-
-      {/* Receipts & Deliveries Section - Hidden on Materials tab */}
-      {activeTab !== 'materials' && (
-        <div className="mt-8">
-          <ReceiptsDeliveriesSection projectId={id} initialViewMode="all" />
-        </div>
-      )}
 
       {/* PO Details Modal */}
       <Dialog open={isPOModalOpen} onOpenChange={setIsPOModalOpen}>
