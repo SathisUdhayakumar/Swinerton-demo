@@ -36,10 +36,8 @@ export function HeaderWithBreadcrumbs() {
             <span className="text-white text-xl font-bold">KRANE</span>
           </Link>
           <div className="h-6 w-px bg-white/30" />
-          <div className="flex items-center gap-2 text-sm text-white/80">
-            <span>{project.company}</span>
-            <span>/</span>
-            <span className="text-white font-medium">{project.name}</span>
+          <div className="text-sm text-white font-medium">
+            {project.name}
           </div>
         </div>
 
