@@ -464,6 +464,42 @@ export default function ProjectDetailPage({ params }: PageProps) {
                           const exactMatches = delivery.lines.filter((l) => l.matchStatus === 'exact').length;
                           const totalItems = delivery.lines.length;
                           
+                          // Mapping from old PO system to new PO IDs
+                          const poMapping: Record<string, string> = {
+                            'po-001': 'PO-2024-002', // SteelCo -> Steel Solutions Inc
+                            'po-002': 'PO-2024-003', // FrameWorks -> BuildRight Materials
+                            '552': 'PO-2024-002',
+                            '771': 'PO-2024-003',
+                          };
+                          
+                          // Find matching PO from purchaseOrders array
+                          let matchedPO = purchaseOrders.find(po => {
+                            // First, check if delivery.poId or delivery.poNumber already matches a PO ID directly
+                            if (delivery.poId && po.id === delivery.poId) return true;
+                            if (delivery.poNumber && po.id === delivery.poNumber) return true;
+                            // Try mapping from old system
+                            if (delivery.poId && po.id === poMapping[delivery.poId]) return true;
+                            if (delivery.poNumber && po.id === poMapping[delivery.poNumber]) return true;
+                            return false;
+                          });
+                          
+                          // If no direct match, try vendor name matching
+                          if (!matchedPO) {
+                            matchedPO = purchaseOrders.find(po => {
+                              const deliveryVendor = delivery.vendor.toLowerCase();
+                              const poVendor = po.vendor.toLowerCase();
+                              // Exact match
+                              if (deliveryVendor === poVendor) return true;
+                              // Partial match for common cases
+                              if (deliveryVendor.includes('steel') && poVendor.includes('steel')) return true;
+                              if (deliveryVendor.includes('frame') && poVendor.includes('build')) return true;
+                              // Check for shared significant words
+                              const deliveryWords = deliveryVendor.split(/[^a-z0-9]+/).filter(w => w.length > 3);
+                              const poWords = poVendor.split(/[^a-z0-9]+/).filter(w => w.length > 3);
+                              return deliveryWords.some(word => poWords.includes(word));
+                            });
+                          }
+                          
                           return (
                             <tr key={delivery.id} className="border-b border-slate-100 hover:bg-slate-50">
                               <td className="py-3 px-4">
@@ -474,10 +510,12 @@ export default function ProjectDetailPage({ params }: PageProps) {
                               <td className="py-3 px-4 text-sm text-slate-800 font-mono">{delivery.bolNumber}</td>
                               <td className="py-3 px-4 text-sm text-slate-600">{delivery.vendor}</td>
                               <td className="py-3 px-4">
-                                {delivery.poNumber ? (
-                                  <Link href={`/po/${delivery.poNumber}`} className="text-sm font-medium text-blue-600 hover:underline">
-                                    {delivery.poNumber}
+                                {matchedPO ? (
+                                  <Link href={`/po/${matchedPO.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                                    {matchedPO.id}
                                   </Link>
+                                ) : delivery.poNumber ? (
+                                  <span className="text-sm text-slate-600">{delivery.poNumber}</span>
                                 ) : (
                                   <span className="text-sm text-slate-400">No PO</span>
                                 )}
