@@ -4,14 +4,13 @@ import { useState, use } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
-import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
 
 type TabId = 'budget' | 'po' | 'deliveries';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'budget', label: 'Budget vs Spent' },
   { id: 'po', label: 'PO' },
-  { id: 'deliveries', label: 'Receipts & Deliveries' },
+  { id: 'deliveries', label: 'Deliveries' },
 ];
 
 interface CostCode {
@@ -342,9 +341,49 @@ export default function ProjectDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Receipts & Deliveries Tab (Real-time SSE) */}
+        {/* Deliveries Tab */}
         {activeTab === 'deliveries' && (
-          <ReceiptsDeliveriesSection projectId={id} projectName={project.name} />
+          <div className="space-y-4">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader className="pb-2">
+                <h3 className="text-lg font-semibold text-slate-800">Deliveries</h3>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-slate-200">
+                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Delivery ID</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Description</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Date</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">PO</th>
+                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {deliveries.map((del) => (
+                        <tr key={del.id} className="border-b border-slate-100 hover:bg-slate-50">
+                          <td className="py-3 px-4 text-sm font-medium text-slate-800">{del.id}</td>
+                          <td className="py-3 px-4 text-sm text-slate-600">{del.description}</td>
+                          <td className="py-3 px-4 text-sm text-slate-600">{del.date}</td>
+                          <td className="py-3 px-4 text-sm text-blue-600">{del.po}</td>
+                          <td className="py-3 px-4">
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              del.status === 'Delivered' ? 'bg-emerald-100 text-emerald-700' :
+                              del.status === 'In Transit' ? 'bg-blue-100 text-blue-700' :
+                              'bg-amber-100 text-amber-700'
+                            }`}>
+                              {del.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>
