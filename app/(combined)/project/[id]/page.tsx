@@ -4,13 +4,13 @@ import { useState, use } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
+import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
 
-type TabId = 'budget' | 'po' | 'deliveries';
+type TabId = 'budget' | 'po';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'budget', label: 'Budget vs Spent' },
   { id: 'po', label: 'PO' },
-  { id: 'deliveries', label: 'Deliveries' },
 ];
 
 interface CostCode {
@@ -130,14 +130,6 @@ const purchaseOrders = [
   { id: 'PO-2024-018', vendor: 'Gerdau Ameristeel', amount: 420000, status: 'Active', date: '2024-11-12' },
 ];
 
-// Sample deliveries data
-const deliveries = [
-  { id: 'DEL-001', description: 'Concrete Mix - 500 yards', date: '2024-12-03', status: 'Delivered', po: 'PO-2024-001' },
-  { id: 'DEL-002', description: 'Rebar #4 - 2000 units', date: '2024-12-04', status: 'In Transit', po: 'PO-2024-002' },
-  { id: 'DEL-003', description: 'Form Panels - 150 sets', date: '2024-12-05', status: 'Scheduled', po: 'PO-2024-003' },
-  { id: 'DEL-004', description: 'Anchor Bolts - 500 units', date: '2024-12-02', status: 'Delivered', po: 'PO-2024-002' },
-];
-
 function getRiskLevel(spent: number, budget: number) {
   const used = (spent / budget) * 100;
   if (used < 75) return { level: 'low' as const, color: 'emerald', used };
@@ -185,28 +177,31 @@ export default function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">{project.name}</h1>
-          <p className="text-slate-500 mt-1">Project Overview</p>
-        </div>
-        
-        {/* Summary Stats */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm px-6 py-4 flex items-center gap-8">
-          <div className="text-center px-4 border-r border-slate-200">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-800">{project.name}</h1>
+        <p className="text-slate-500 mt-1">Project Overview</p>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase tracking-wider">Total Budget</p>
-            <p className="text-xl font-bold text-slate-800 mt-1">{formatCurrency(totalBudget)}</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{formatCurrency(totalBudget)}</p>
           </div>
-          <div className="text-center px-4 border-r border-slate-200">
+          <div className="text-center p-4 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase tracking-wider">Total Spent</p>
-            <p className="text-xl font-bold text-slate-800 mt-1">{formatCurrency(totalSpent)}</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{formatCurrency(totalSpent)}</p>
           </div>
-          <div className="text-center px-4">
+          <div className="text-center p-4 bg-slate-50 rounded-lg">
             <p className="text-xs text-slate-500 uppercase tracking-wider">Remaining</p>
-            <p className="text-xl font-bold text-emerald-600 mt-1">{formatCurrency(totalRemaining)}</p>
+            <p className="text-2xl font-bold text-emerald-600 mt-1">{formatCurrency(totalRemaining)}</p>
           </div>
         </div>
       </div>
+
+      {/* Receipts & Deliveries Section */}
+      <ReceiptsDeliveriesSection projectId={id} />
 
       {/* Segment Control */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-1.5 inline-flex">
@@ -341,50 +336,6 @@ export default function ProjectDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Deliveries Tab */}
-        {activeTab === 'deliveries' && (
-          <div className="space-y-4">
-            <Card className="bg-white border-slate-200 shadow-sm">
-              <CardHeader className="pb-2">
-                <h3 className="text-lg font-semibold text-slate-800">Deliveries</h3>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-slate-200">
-                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Delivery ID</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Description</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Date</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">PO</th>
-                        <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deliveries.map((del) => (
-                        <tr key={del.id} className="border-b border-slate-100 hover:bg-slate-50">
-                          <td className="py-3 px-4 text-sm font-medium text-slate-800">{del.id}</td>
-                          <td className="py-3 px-4 text-sm text-slate-600">{del.description}</td>
-                          <td className="py-3 px-4 text-sm text-slate-600">{del.date}</td>
-                          <td className="py-3 px-4 text-sm text-blue-600">{del.po}</td>
-                          <td className="py-3 px-4">
-                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                              del.status === 'Delivered' ? 'bg-emerald-100 text-emerald-700' :
-                              del.status === 'In Transit' ? 'bg-blue-100 text-blue-700' :
-                              'bg-amber-100 text-amber-700'
-                            }`}>
-                              {del.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
     </div>
   );
