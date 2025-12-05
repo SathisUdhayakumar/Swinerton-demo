@@ -27,7 +27,7 @@ export default function CombinedLayout({
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-[#1e3a5f] text-xl tracking-widest uppercase" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, letterSpacing: '0.15em' }}>Swinerton</h1>
-                <p className="text-slate-400 text-[10px] tracking-widest uppercase">Field Operations</p>
+                <p className="text-slate-400 text-[10px] tracking-widest uppercase">Self Perform</p>
               </div>
             </Link>
 
