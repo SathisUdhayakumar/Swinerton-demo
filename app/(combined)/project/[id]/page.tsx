@@ -215,9 +215,8 @@ export default function ProjectDetailPage({ params }: PageProps) {
       <div className="mt-6">
         {/* Budget vs Spent Tab */}
         {activeTab === 'budget' && (
-          <div className="space-y-4">
-            <Card className="bg-white border-slate-200 shadow-sm">
-              <CardContent className="p-0">
+          <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+            <CardContent className="p-0">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
@@ -276,8 +275,7 @@ export default function ProjectDetailPage({ params }: PageProps) {
                   </table>
                 </div>
               </CardContent>
-            </Card>
-          </div>
+          </Card>
         )}
 
         {/* PO Tab */}
