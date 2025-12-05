@@ -15,7 +15,6 @@ import { formatCurrency } from '@/lib/utils';
 import { Delivery } from '@/types';
 import { MaterialTable } from '@/components/material/MaterialTable';
 import { BOLvsPOCompare } from '@/components/compare/BOLvsPOCompare';
-import { BOLvsPOCompare } from '@/components/compare/BOLvsPOCompare';
 
 interface PurchaseOrder {
   id: string;
