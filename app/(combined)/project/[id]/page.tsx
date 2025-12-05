@@ -225,8 +225,14 @@ export default function ProjectDetailPage({ params }: PageProps) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Project Overview</h1>
-            <p className="text-sm text-slate-500 mt-1">{project.name}</p>
+            {activeTab === 'materials' ? (
+              <h1 className="text-2xl font-bold text-slate-900">Materials</h1>
+            ) : (
+              <>
+                <h1 className="text-2xl font-bold text-slate-900">Project Overview</h1>
+                <p className="text-sm text-slate-500 mt-1">{project.name}</p>
+              </>
+            )}
           </div>
           {activeTab !== 'materials' && (
             <div className="flex items-center gap-3">
