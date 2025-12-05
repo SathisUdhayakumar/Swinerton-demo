@@ -2,9 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function ProjectSidebar() {
+  const pathname = usePathname();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['procurement']));
+
+  // Extract project ID from pathname
+  const projectId = pathname?.split('/project/')[1]?.split('/')[0] || '';
+  const isDashboard = pathname?.endsWith('/dashboard') || pathname?.match(/\/project\/[^/]+\/?$/);
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => {
@@ -23,8 +29,12 @@ export function ProjectSidebar() {
       <nav className="px-3 pt-4">
         {/* Dashboard */}
         <Link
-          href="#"
-          className="flex items-center gap-3 px-4 py-3 mb-1 rounded-lg text-white/70 hover:bg-[#2a4a6f] hover:text-white transition-colors"
+          href={`/project/${projectId}/dashboard`}
+          className={`flex items-center gap-3 px-4 py-3 mb-1 rounded-lg transition-colors ${
+            isDashboard
+              ? 'bg-[#2a4a6f] text-white'
+              : 'text-white/70 hover:bg-[#2a4a6f] hover:text-white'
+          }`}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -56,8 +66,12 @@ export function ProjectSidebar() {
           {expandedSections.has('procurement') && (
             <div className="ml-4 mt-1 space-y-1">
               <Link
-                href="#"
-                className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[#2a4a6f] text-white transition-colors"
+                href={`/project/${projectId}`}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
+                  pathname === `/project/${projectId}` || pathname === `/project/${projectId}/`
+                    ? 'bg-[#2a4a6f] text-white'
+                    : 'text-white/70 hover:bg-[#2a4a6f] hover:text-white'
+                }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />

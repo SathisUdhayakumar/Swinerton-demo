@@ -22,6 +22,7 @@ export function HeaderWithBreadcrumbs() {
   // Extract project ID from pathname
   const projectId = isProjectPage ? pathname.split('/project/')[1]?.split('/')[0] : null;
   const project = projectId ? projects[projectId] : null;
+  const isDashboard = pathname?.endsWith('/dashboard');
 
   if (isProjectPage && project) {
     // Dark blue header with breadcrumbs for project pages (matching side panel)
@@ -37,7 +38,7 @@ export function HeaderWithBreadcrumbs() {
           </Link>
           <div className="h-6 w-px bg-white/30" />
           <div className="text-sm text-white font-medium">
-            {project.name}
+            {isDashboard ? 'Dashboard' : project.name}
           </div>
         </div>
 
