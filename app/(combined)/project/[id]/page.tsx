@@ -153,9 +153,9 @@ export default function ProjectDetailPage({ params }: PageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Get initial tab from URL search params, default to 'budget' if coming from dashboard
+  // Get initial tab from URL search params, default to 'materials' if no param
   const tabFromUrl = searchParams?.get('tab') as TabId;
-  const [activeTab, setActiveTab] = useState<TabId>(tabFromUrl || 'budget');
+  const [activeTab, setActiveTab] = useState<TabId>(tabFromUrl || 'materials');
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [isDeliveriesLoading, setIsDeliveriesLoading] = useState(true);
 
@@ -163,6 +163,9 @@ export default function ProjectDetailPage({ params }: PageProps) {
   useEffect(() => {
     if (tabFromUrl && ['materials', 'budget', 'po', 'deliveries'].includes(tabFromUrl)) {
       setActiveTab(tabFromUrl);
+    } else if (!tabFromUrl) {
+      // If no tab param, default to materials
+      setActiveTab('materials');
     }
   }, [tabFromUrl]);
 
