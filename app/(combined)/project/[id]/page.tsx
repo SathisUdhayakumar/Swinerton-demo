@@ -598,9 +598,18 @@ export default function ProjectDetailPage({ params }: PageProps) {
                               <td className="py-3 px-4 text-sm text-slate-600">{delivery.vendor}</td>
                               <td className="py-3 px-4">
                                 {matchedPO ? (
-                                  <Link href={`/po/${matchedPO.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                                  <button
+                                    onClick={() => {
+                                      const poDetail = poDetails[matchedPO.id];
+                                      if (poDetail) {
+                                        setSelectedPO(poDetail);
+                                        setIsPOModalOpen(true);
+                                      }
+                                    }}
+                                    className="text-sm font-medium text-blue-600 hover:underline cursor-pointer"
+                                  >
                                     {matchedPO.id}
-                                  </Link>
+                                  </button>
                                 ) : (
                                   <span className="text-sm text-slate-400">{delivery.poNumber || 'No PO'}</span>
                                 )}
