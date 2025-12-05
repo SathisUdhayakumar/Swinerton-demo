@@ -3,6 +3,7 @@
 import { useState, use } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
 
@@ -177,9 +178,29 @@ export default function ProjectDetailPage({ params }: PageProps) {
       </div>
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-800">{project.name}</h1>
-        <p className="text-slate-500 mt-1">Project Overview</p>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">{project.name}</h1>
+          <p className="text-slate-500 mt-1">Project Overview</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link href="/capture-receipt">
+            <Button variant="outline" className="gap-2 border-slate-300 text-slate-700 hover:bg-slate-100">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+              </svg>
+              Receipt
+            </Button>
+          </Link>
+          <Link href="/capture-bol">
+            <Button variant="outline" className="gap-2 border-slate-300 text-slate-700 hover:bg-slate-100">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              BOL
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Summary Stats */}
