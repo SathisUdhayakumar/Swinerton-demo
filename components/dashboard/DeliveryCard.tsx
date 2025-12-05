@@ -84,7 +84,7 @@ export function DeliveryCard({ delivery, onClick, onDelete }: DeliveryCardProps)
   };
 
   const cardContent = (
-    <Card className="bg-white border-slate-200 hover:border-blue-300 transition-all hover:shadow-lg cursor-pointer group relative">
+    <Card className="bg-white border-slate-200 hover:border-blue-300 transition-all hover:shadow-lg cursor-pointer group relative h-full flex flex-col">
       {isNew && (
         <span className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
           NEW
@@ -101,7 +101,7 @@ export function DeliveryCard({ delivery, onClick, onDelete }: DeliveryCardProps)
           </svg>
         </button>
       )}
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
@@ -147,7 +147,7 @@ export function DeliveryCard({ delivery, onClick, onDelete }: DeliveryCardProps)
         </div>
 
         {/* Match Score */}
-        <div className="mt-3">
+        <div className="mt-auto pt-3">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-slate-500">Match Score</span>
             <span className="text-slate-600 font-medium">{(delivery.matchScore * 100).toFixed(0)}%</span>

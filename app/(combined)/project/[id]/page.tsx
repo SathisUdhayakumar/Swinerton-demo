@@ -188,7 +188,10 @@ const poDetails: Record<string, PODetail> = {
 // Mock PO data - expanded list
 const purchaseOrders: PurchaseOrder[] = [
   { id: 'PO-2024-001', poNumber: 'PO-2024-001', vendor: 'ABC Concrete Supply', project: 'Clemson-210 Keowee Trl', projectId: 'alpha', deliveryWindow: { start: '2024-11-15', end: '2024-12-15' }, lines: [], status: 'open', createdAt: '2024-11-15T10:00:00Z' },
-  { id: 'PO-2024-002', poNumber: 'PO-2024-002', vendor: 'Steel Solutions Inc', project: 'Clemson-210 Keowee Trl', projectId: 'alpha', deliveryWindow: { start: '2024-11-20', end: '2024-12-20' }, lines: [], status: 'open', createdAt: '2024-11-20T14:30:00Z' },
+  { id: 'PO-2024-002', poNumber: 'PO-2024-002', vendor: 'Steel Solutions Inc', project: 'Clemson-210 Keowee Trl', projectId: 'alpha', deliveryWindow: { start: '2024-11-20', end: '2024-12-20' }, lines: [
+    { id: 'L1', description: 'W12x26 Steel Beam', qty: 120, unit: 'LF', unitPrice: 850.00 },
+    { id: 'L2', description: 'W10x22 Steel Beam', qty: 200, unit: 'LF', unitPrice: 680.00 },
+  ], status: 'open', createdAt: '2024-11-20T14:30:00Z' },
   { id: 'PO-2024-003', poNumber: 'PO-2024-003', vendor: 'Material Works Co', project: 'Clemson-210 Keowee Trl', projectId: 'alpha', deliveryWindow: { start: '2024-11-25', end: '2024-12-25' }, lines: [
     { id: 'po-line-003-001', description: 'Steel Beams W12x26', qty: 100, unit: 'EA', unitPrice: 125.00 },
     { id: 'po-line-003-002', description: 'Steel Bolts 3/4" x 3"', qty: 500, unit: 'EA', unitPrice: 2.50 },
@@ -285,21 +288,50 @@ export default function ProjectDetailPage({ params }: PageProps) {
         // Remove ripple after animation completes
         setTimeout(() => setRipplePOId(null), 2000);
       }
-      if (data.delivery && data.delivery.projectId === id) {
-        if (data.type === 'created') {
+      if (data.delivery) {
+        if (data.type === 'created' && data.delivery.projectId === id) {
           setDeliveries((prev) => [data.delivery, ...prev]);
-        } else if (data.type === 'updated') {
+        } else if (data.type === 'updated' && data.delivery.projectId === id) {
           setDeliveries((prev) =>
             prev.map((d) => (d.id === data.delivery.id ? data.delivery : d))
           );
         } else if (data.type === 'deleted') {
-          // Remove the deleted delivery from state
+          // Remove the deleted delivery from state by ID (regardless of projectId check)
+          // This ensures deletions are processed even if projectId is missing or doesn't match
           setDeliveries((prev) => {
-            const filtered = prev.filter((d) => d.id !== data.delivery.id);
-            // If the deleted delivery was linked to a PO, clear any expanded state for that PO
-            if (data.delivery.poId || data.delivery.poNumber) {
-              // The count will automatically update since it's calculated from the filtered deliveries
+            const deliveryToDelete = prev.find((d) => d.id === data.delivery.id);
+            if (!deliveryToDelete) {
+              // Delivery not in current state, nothing to remove
+              return prev;
             }
+            
+            const filtered = prev.filter((d) => d.id !== data.delivery.id);
+            
+            // If the deleted delivery was linked to a PO, check if we need to close expanded state
+            const linkedPO = projectPOs.find(po => 
+              po.poNumber === deliveryToDelete.poNumber || 
+              po.id === deliveryToDelete.poId ||
+              (po.vendor === deliveryToDelete.vendor && po.projectId === deliveryToDelete.projectId)
+            );
+            
+            // If this was the last delivery for an expanded PO, close it
+            if (linkedPO) {
+              const remainingDeliveries = filtered.filter(d => 
+                d.poNumber === linkedPO.poNumber || 
+                d.poId === linkedPO.id ||
+                (d.vendor === linkedPO.vendor && d.projectId === linkedPO.projectId)
+              );
+              
+              if (remainingDeliveries.length === 0) {
+                // Close expanded state if no deliveries remain
+                setExpandedPOs((prev) => {
+                  const newSet = new Set(prev);
+                  newSet.delete(linkedPO.id);
+                  return newSet;
+                });
+              }
+            }
+            
             return filtered;
           });
         }
