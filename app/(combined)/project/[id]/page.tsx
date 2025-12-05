@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, use, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import { ReceiptsDeliveriesSection } from '@/components/dashboard/ReceiptsDeliveriesSection';
+import { Delivery, SSEDeliveryEvent } from '@/types';
 
-type TabId = 'budget' | 'po';
+type TabId = 'budget' | 'po' | 'deliveries';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'budget', label: 'Budget vs Spent' },
   { id: 'po', label: 'PO' },
+  { id: 'deliveries', label: 'Deliveries' },
 ];
 
 interface CostCode {
@@ -147,8 +149,60 @@ export default function ProjectDetailPage({ params }: PageProps) {
   const [activeTab, setActiveTab] = useState<TabId>('budget');
   const [showReceiptsDeliveries, setShowReceiptsDeliveries] = useState(false);
   const [receiptsDeliveriesView, setReceiptsDeliveriesView] = useState<'receipts' | 'deliveries'>('receipts');
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [isDeliveriesLoading, setIsDeliveriesLoading] = useState(true);
   
   const project = projects[id];
+
+  // Fetch deliveries
+  const fetchDeliveries = useCallback(async () => {
+    try {
+      const deliveriesRes = await fetch('/api/deliveries');
+      const deliveriesData = await deliveriesRes.json();
+
+      if (deliveriesData.success) {
+        const filteredDeliveries = deliveriesData.data.filter((d: Delivery) => d.projectId === id);
+        setDeliveries(filteredDeliveries);
+      }
+    } catch (error) {
+      console.error('Failed to fetch deliveries:', error);
+    } finally {
+      setIsDeliveriesLoading(false);
+    }
+  }, [id]);
+
+  // Subscribe to deliveries SSE
+  useEffect(() => {
+    if (activeTab === 'deliveries') {
+      fetchDeliveries();
+
+      const deliverySource = new EventSource('/api/deliveries/stream');
+
+      deliverySource.addEventListener('delivery', (event) => {
+        const data: SSEDeliveryEvent = JSON.parse(event.data);
+
+        if (data.delivery.projectId !== id) return;
+
+        if (data.type === 'created') {
+          setDeliveries((prev) => [data.delivery, ...prev]);
+        } else if (data.type === 'updated') {
+          setDeliveries((prev) =>
+            prev.map((d) => (d.id === data.delivery.id ? data.delivery : d))
+          );
+        } else if (data.type === 'deleted') {
+          setDeliveries((prev) => prev.filter((d) => d.id !== data.delivery.id));
+        }
+      });
+
+      deliverySource.onerror = () => {
+        setTimeout(() => fetchDeliveries(), 3000);
+      };
+
+      return () => {
+        deliverySource.close();
+      };
+    }
+  }, [fetchDeliveries, id, activeTab]);
 
   if (!project) {
     return (
@@ -364,6 +418,120 @@ export default function ProjectDetailPage({ params }: PageProps) {
                     </tbody>
                   </table>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Deliveries Tab */}
+        {activeTab === 'deliveries' && (
+          <div className="space-y-4">
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader className="pb-2">
+                <h3 className="text-lg font-semibold text-slate-800">Deliveries</h3>
+              </CardHeader>
+              <CardContent>
+                {isDeliveriesLoading ? (
+                  <div className="py-8 text-center">
+                    <div className="inline-block w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    <p className="text-slate-500 text-sm mt-2">Loading deliveries...</p>
+                  </div>
+                ) : deliveries.length === 0 ? (
+                  <div className="py-12 text-center">
+                    <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <p className="text-slate-500 text-lg font-medium">No deliveries found</p>
+                    <p className="text-slate-400 text-sm mt-1">Site team can upload BOLs via the workflow</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-slate-200">
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Delivery ID</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">BOL Number</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Vendor</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">PO Number</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Date</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Items</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Match Score</th>
+                          <th className="text-left py-3 px-4 text-sm font-medium text-slate-500">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {deliveries.map((delivery) => {
+                          const exactMatches = delivery.lines.filter((l) => l.matchStatus === 'exact').length;
+                          const totalItems = delivery.lines.length;
+                          
+                          return (
+                            <tr key={delivery.id} className="border-b border-slate-100 hover:bg-slate-50">
+                              <td className="py-3 px-4">
+                                <Link href={`/delivery/${delivery.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                                  {delivery.id}
+                                </Link>
+                              </td>
+                              <td className="py-3 px-4 text-sm text-slate-800 font-mono">{delivery.bolNumber}</td>
+                              <td className="py-3 px-4 text-sm text-slate-600">{delivery.vendor}</td>
+                              <td className="py-3 px-4">
+                                {delivery.poNumber ? (
+                                  <Link href={`/po/${delivery.poNumber}`} className="text-sm font-medium text-blue-600 hover:underline">
+                                    {delivery.poNumber}
+                                  </Link>
+                                ) : (
+                                  <span className="text-sm text-slate-400">No PO</span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4 text-sm text-slate-600">{delivery.deliveryDate}</td>
+                              <td className="py-3 px-4 text-sm text-slate-600">
+                                <div className="flex flex-col">
+                                  <span>{totalItems} items</span>
+                                  {exactMatches > 0 && (
+                                    <span className="text-xs text-emerald-600">{exactMatches} matched</span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-4">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div
+                                      className={`h-full rounded-full ${
+                                        delivery.matchScore >= 0.8 ? 'bg-emerald-500' :
+                                        delivery.matchScore >= 0.5 ? 'bg-amber-500' : 'bg-red-500'
+                                      }`}
+                                      style={{ width: `${delivery.matchScore * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-xs font-medium text-slate-600">
+                                    {(delivery.matchScore * 100).toFixed(0)}%
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="py-3 px-4">
+                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                                  delivery.status === 'verified' || delivery.status === 'approved' 
+                                    ? 'bg-emerald-100 text-emerald-700' :
+                                  delivery.status === 'pending_approval' 
+                                    ? 'bg-amber-100 text-amber-700' :
+                                  delivery.status === 'needs_review' || delivery.status === 'unmatched'
+                                    ? 'bg-orange-100 text-orange-700' :
+                                    'bg-red-100 text-red-700'
+                                }`}>
+                                  {delivery.status === 'verified' ? 'Verified' :
+                                   delivery.status === 'approved' ? 'Approved' :
+                                   delivery.status === 'pending_approval' ? 'Pending' :
+                                   delivery.status === 'needs_review' ? 'Review' :
+                                   delivery.status === 'unmatched' ? 'Unmatched' :
+                                   'Rejected'}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
