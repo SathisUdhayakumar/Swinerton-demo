@@ -35,9 +35,9 @@ export function ReceiptPreviewModal({
   isLoading,
 }: ReceiptPreviewModalProps) {
   const avgConfidence = (
-    (receipt.merchantConfidence ?? 0.85) +
-    (receipt.dateConfidence ?? 0.85) +
-    (receipt.totalConfidence ?? 0.85)
+    receipt.merchantConfidence +
+    receipt.dateConfidence +
+    receipt.totalConfidence
   ) / 3;
 
   return (
@@ -77,21 +77,21 @@ export function ReceiptPreviewModal({
               <span className="text-slate-500">Merchant</span>
               <div className="flex items-center gap-2">
                 <span className="text-slate-800 font-medium">{receipt.merchant}</span>
-                <ConfidenceBadge confidence={receipt.merchantConfidence ?? 0.85} />
+                <ConfidenceBadge confidence={receipt.merchantConfidence} />
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Date</span>
               <div className="flex items-center gap-2">
                 <span className="text-slate-700">{receipt.date}</span>
-                <ConfidenceBadge confidence={receipt.dateConfidence ?? 0.85} />
+                <ConfidenceBadge confidence={receipt.dateConfidence} />
               </div>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Total</span>
               <div className="flex items-center gap-2">
                 <span className="text-slate-800 font-bold text-lg">${receipt.total.toFixed(2)}</span>
-                <ConfidenceBadge confidence={receipt.totalConfidence ?? 0.85} />
+                <ConfidenceBadge confidence={receipt.totalConfidence} />
               </div>
             </div>
             {receipt.tax && (

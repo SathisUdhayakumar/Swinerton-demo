@@ -54,7 +54,7 @@ export type DeliveryStatus =
   | 'unmatched' 
   | 'rejected';
 
-export type MatchStatus = 'exact' | 'partial' | 'over' | 'under' | 'unmatched' | 'missing';
+export type MatchStatus = 'exact' | 'partial' | 'over' | 'under' | 'unmatched';
 
 export interface DeliveryLine {
   id: string;
@@ -158,9 +158,6 @@ export interface User {
   name: string;
   email: string;
   role: string;
-  projectIds?: string[];
-  lastUsedProjectId?: string;
-  lastUsedCostCodeId?: string;
 }
 
 // ============== Audit Log Types ==============

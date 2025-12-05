@@ -2,7 +2,6 @@
 
 import { useRef, useEffect } from 'react';
 import { ChatMessage, ParsedReceipt, ProjectSuggestion } from '@/types';
-import { ModernHero } from '@/components/ui/modern/ModernHero';
 
 interface KraneMessageListProps {
   messages: ChatMessage[];
@@ -37,9 +36,9 @@ function ParsedReceiptCard({
   onEdit?: () => void;
 }) {
   const avgConfidence = (
-    (receipt.merchantConfidence ?? 0.85) +
-    (receipt.dateConfidence ?? 0.85) +
-    (receipt.totalConfidence ?? 0.85)
+    receipt.merchantConfidence +
+    receipt.dateConfidence +
+    receipt.totalConfidence
   ) / 3;
 
   return (
@@ -54,21 +53,21 @@ function ParsedReceiptCard({
           <span className="text-slate-500 text-sm">Merchant</span>
           <div className="flex items-center gap-2">
             <span className="text-slate-800 font-medium">{receipt.merchant}</span>
-            <ConfidenceBadge confidence={receipt.merchantConfidence ?? 0.85} />
+            <ConfidenceBadge confidence={receipt.merchantConfidence} />
           </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-slate-500 text-sm">Date</span>
           <div className="flex items-center gap-2">
             <span className="text-slate-700">{receipt.date}</span>
-            <ConfidenceBadge confidence={receipt.dateConfidence ?? 0.85} />
+            <ConfidenceBadge confidence={receipt.dateConfidence} />
           </div>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-slate-500 text-sm">Total</span>
           <div className="flex items-center gap-2">
             <span className="text-slate-800 font-bold">${receipt.total.toFixed(2)}</span>
-            <ConfidenceBadge confidence={receipt.totalConfidence ?? 0.85} />
+            <ConfidenceBadge confidence={receipt.totalConfidence} />
           </div>
         </div>
         {receipt.tax && (
@@ -193,7 +192,7 @@ function MessageBubble({
             <p className="text-sm mb-1">{message.content}</p>
             <ParsedReceiptCard 
               receipt={message.parsedData as ParsedReceipt}
-              suggestions={Array.isArray(message.suggestions) ? message.suggestions[0] : message.suggestions}
+              suggestions={message.suggestions}
               onConfirm={onConfirm}
               onEdit={onEdit}
             />
@@ -247,11 +246,17 @@ export function KraneMessageList({
     <div className="flex-1 overflow-y-auto px-4 py-4 bg-gradient-to-b from-slate-100 to-slate-50">
       {/* Welcome message */}
       {messages.length === 0 && (
-        <ModernHero 
-          title="Meet KAI"
-          subtitle="Your AI Assistant"
-          description="Upload receipts or BOLs to get started. I'll help you process and log them."
-        />
+        <div className="text-center py-8">
+          <div className="w-16 h-16 mx-auto mb-4 bg-amber-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-slate-700 mb-2">Welcome to Krane</h3>
+          <p className="text-sm text-slate-500 max-w-xs mx-auto">
+            Upload receipts or BOLs to get started. I'll help you process and log them.
+          </p>
+        </div>
       )}
 
       {/* Messages */}

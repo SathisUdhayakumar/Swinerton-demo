@@ -214,28 +214,28 @@ function MessageBubble({
             <div className="bg-slate-50 rounded-lg p-3 space-y-2 border border-slate-200">
               <div className="flex items-center justify-between text-xs text-slate-500 uppercase tracking-wider">
                 <span>OCR Results</span>
-                <ConfidenceBadge confidence={(message.parsedData.merchantConfidence + message.parsedData.dateConfidence + message.parsedData.totalConfidence) / 3} />
+                <ConfidenceBadge confidence={((message.parsedData.merchantConfidence ?? 0.85) + (message.parsedData.dateConfidence ?? 0.85) + (message.parsedData.totalConfidence ?? 0.85)) / 3} />
               </div>
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Merchant</span>
                   <div className="flex items-center gap-1">
                     <span className="text-slate-800 font-medium">{message.parsedData.merchant}</span>
-                    <ConfidenceBadge confidence={message.parsedData.merchantConfidence} />
+                    <ConfidenceBadge confidence={message.parsedData.merchantConfidence ?? 0.85} />
                   </div>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Date</span>
                   <div className="flex items-center gap-1">
                     <span className="text-slate-700">{message.parsedData.date}</span>
-                    <ConfidenceBadge confidence={message.parsedData.dateConfidence} />
+                    <ConfidenceBadge confidence={message.parsedData.dateConfidence ?? 0.85} />
                   </div>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Total</span>
                   <div className="flex items-center gap-1">
                     <span className="text-slate-800 font-bold">${message.parsedData.total.toFixed(2)}</span>
-                    <ConfidenceBadge confidence={message.parsedData.totalConfidence} />
+                    <ConfidenceBadge confidence={message.parsedData.totalConfidence ?? 0.85} />
                   </div>
                 </div>
               </div>
@@ -248,7 +248,7 @@ function MessageBubble({
                   </div>
                 </div>
               )}
-              {((message.parsedData.merchantConfidence + message.parsedData.dateConfidence + message.parsedData.totalConfidence) / 3) < 0.8 && (
+              {(((message.parsedData.merchantConfidence ?? 0.85) + (message.parsedData.dateConfidence ?? 0.85) + (message.parsedData.totalConfidence ?? 0.85)) / 3) < 0.8 && (
                 <div className="p-2 bg-red-50 border border-red-200 rounded text-xs text-red-700">
                   ⚠️ Low confidence - please review
                 </div>

@@ -216,20 +216,18 @@ export default function KraneChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-56px)] bg-slate-50">
       <KraneHeader />
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <KraneMessageList
-          messages={messages}
-          onConfirmReceipt={handleConfirmReceipt}
-          onEditReceipt={handleEditReceipt}
-        />
-        <KraneMessageInput
-          onSendMessage={handleSendMessage}
-          onUploadImage={handleUploadImage}
-          disabled={isProcessing}
-        />
-      </div>
+      <KraneMessageList
+        messages={messages}
+        onConfirmReceipt={handleConfirmReceipt}
+        onEditReceipt={handleEditReceipt}
+      />
+      <KraneMessageInput
+        onSendMessage={handleSendMessage}
+        onUploadImage={handleUploadImage}
+        disabled={isProcessing}
+      />
     </div>
   );
 }
