@@ -12,22 +12,15 @@ export default function CombinedLayout({
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14">
             {/* Logo & Title */}
-            <Link href="/dashboard" className="flex items-center gap-3">
-              {/* Swinerton Logo Icon - Two figures representing partnership/collaboration */}
-              <div className="w-11 h-11 bg-[#1e3a5f] rounded flex items-center justify-center overflow-hidden">
-                <svg className="w-8 h-8" viewBox="0 0 40 40" fill="none">
-                  {/* Two figures side by side */}
-                  <circle cx="14" cy="12" r="4" fill="#8faabe"/>
-                  <path d="M8 28c0-4 3-7 6-7s6 3 6 7" stroke="#8faabe" strokeWidth="2" fill="none"/>
-                  <circle cx="26" cy="12" r="4" fill="white"/>
-                  <path d="M20 28c0-4 3-7 6-7s6 3 6 7" stroke="white" strokeWidth="2" fill="none"/>
-                  {/* Raised arm gesture */}
-                  <path d="M28 16 L34 8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-[#1e3a5f] text-xl tracking-widest uppercase" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, letterSpacing: '0.15em' }}>Swinerton</h1>
-                <p className="text-slate-400 text-[10px] tracking-widest uppercase">Self Perform</p>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              {/* Swinerton Official Logo */}
+              <img 
+                src="/swinerton-logo.png" 
+                alt="Swinerton" 
+                className="h-10 w-auto"
+              />
+              <div className="hidden sm:block border-l border-slate-300 pl-2">
+                <p className="text-[#1e3a5f] text-xs font-medium tracking-wide">Self Perform</p>
               </div>
             </Link>
 
