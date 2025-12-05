@@ -145,8 +145,8 @@ function CostCodeRow({ costCode }: { costCode: CostCode }) {
       </div>
       
       <div className="flex items-center justify-between text-xs text-slate-500">
-        <span>Spent: <span className="font-medium text-slate-700">{formatCurrency(costCode.spent)}</span></span>
         <span>Budget: <span className="font-medium text-slate-700">{formatCurrency(costCode.budget)}</span></span>
+        <span>Spent: <span className="font-medium text-slate-700">{formatCurrency(costCode.spent)}</span></span>
         <span>Remaining: <span className={`font-medium ${remaining < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
           {formatCurrency(remaining)}
         </span></span>
