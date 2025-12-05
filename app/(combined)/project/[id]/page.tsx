@@ -273,24 +273,26 @@ export default function ProjectDetailPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Segment Control */}
-      <div className="mb-6">
-        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg inline-flex">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* Segment Control - Hidden on Materials tab */}
+      {activeTab !== 'materials' && (
+        <div className="mb-6">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg inline-flex">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-white text-slate-900 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Tab Content */}
       <div>
