@@ -180,45 +180,11 @@ function ProjectCard({ project }: { project: Project }) {
       
       <CardContent className="pt-0">
         {/* Cost Codes */}
-        <div className="mb-4">
+        <div>
           {project.costCodes.map((cc) => (
             <CostCodeRow key={cc.code} costCode={cc} />
           ))}
         </div>
-
-        {/* Purchase Orders */}
-        {project.purchaseOrders.length > 0 && (
-          <div>
-            <h4 className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">
-              Purchase Orders
-            </h4>
-            <div className="space-y-2">
-              {project.purchaseOrders.map((po) => (
-                <div
-                  key={po.number}
-                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-slate-700">{po.number}</p>
-                    <p className="text-xs text-slate-500">{po.name}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-slate-800">
-                      {formatCurrency(po.remaining)}
-                    </p>
-                    <p className="text-xs text-slate-500">remaining</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {project.purchaseOrders.length === 0 && (
-          <div className="text-center py-3 text-sm text-slate-400">
-            No purchase orders
-          </div>
-        )}
       </CardContent>
     </Card>
   );
